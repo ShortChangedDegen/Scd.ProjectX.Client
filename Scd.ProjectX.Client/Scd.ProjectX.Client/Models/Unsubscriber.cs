@@ -14,13 +14,13 @@ namespace Scd.ProjectX.Client.Models
             _observer = Guard.NotNull(observer, nameof(observer));
         }
 
-        private void Dispose(bool isDisposing = false)
+        protected async Task Dispose(bool isDisposing = false)
         {
             if (_isDisposed)
             {
                 return;
             }
-
+            
             if (isDisposing)
             {
                 if (_observers.Contains(_observer))
@@ -29,6 +29,7 @@ namespace Scd.ProjectX.Client.Models
                 }
             }
             _isDisposed = true;
+
         }
 
         public void Dispose()

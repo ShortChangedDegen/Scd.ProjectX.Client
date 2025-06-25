@@ -14,7 +14,7 @@ namespace Scd.ProjectX.Client.Messaging
     /// Initializes a new instance of the <see cref="MarketEventHub"/> class.
     /// </remarks>
     /// <param name="projectXSettings">The ProjectX settings.</param>
-    public class MarketEventHub(AuthTokenHandler handler, IOptions<ProjectXSettings> projectXSettings) : IDisposable, IMarketEventHub
+    public class MarketEventHub : IDisposable, IMarketEventHub
     {
         protected List<IDisposable> subscribers = new();
 
@@ -22,15 +22,40 @@ namespace Scd.ProjectX.Client.Messaging
         protected IEventDispatcher<MarketTradeEvent>? marketTradeHub;
         protected IEventDispatcher<MarketDepthEvent>? marketDepthHub;
 
-        protected IHubConnectionBuilder hubBuilder = new HubConnectionBuilder()
-                .WithAutomaticReconnect();
+        protected IHubConnectionBuilder hubBuilder;
 
         protected HubConnection? hubConnection;
 
-        protected readonly ProjectXSettings settings = Guard.NotNull(projectXSettings.Value, nameof(projectXSettings));
+        protected readonly ProjectXSettings settings;
         protected bool isDisposed;
         private bool _disposeHubConnection = true;
-        private AuthTokenHandler _authTokenHandler = Guard.NotNull(handler, nameof(handler));
+        private IAuthTokenHandler _authTokenHandler;
+
+        public MarketEventHub(IAuthTokenHandler handler, IOptions<ProjectXSettings> projectXSettings)
+        {
+            settings = Guard.NotNull(projectXSettings?.Value, nameof(projectXSettings));
+            _authTokenHandler = Guard.NotNull(handler, nameof(handler));
+            var getTokenTask = _authTokenHandler.GetToken();
+            try
+            {
+                if (getTokenTask.Status != TaskStatus.Running
+                    && getTokenTask.Status != TaskStatus.WaitingForActivation
+                    && getTokenTask.Status != TaskStatus.RanToCompletion)
+                {
+                    getTokenTask.RunSynchronously();
+                }
+            }
+            catch (InvalidOperationException oEx)
+            {
+                // Log and ignore RunSynchronously already.                
+            }
+            
+            // Ensure the token is retrieved before building the connection
+            hubConnection = new HubConnectionBuilder()
+                .WithAutomaticReconnect()
+                .WithUrl($"{settings.MarketHubUrl}?access_token={getTokenTask.Result}")
+                .Build();
+        }
 
         /// <summary>
         /// Starts the <see cref="MarketEventHub"/>.
@@ -38,13 +63,6 @@ namespace Scd.ProjectX.Client.Messaging
         /// <returns>A task.</returns>
         public async Task StartAsync()
         {
-            if (hubConnection == null && hubBuilder != null)
-            {
-                hubConnection = hubBuilder
-                    .WithUrl($"{settings.MarketHubUrl}?access_token={await _authTokenHandler.GetToken()}")
-                    .Build();
-            }
-
             while (hubConnection!.State == HubConnectionState.Disconnected)
             {
                 await hubConnection.StartAsync();
@@ -95,7 +113,6 @@ namespace Scd.ProjectX.Client.Messaging
         {
             var subscriberTasks = new List<Task>();
 
-            dispatcher.Init();
             subscribers.AddRange(observers.Select(dispatcher.Subscribe));
 
             foreach (var id in contractIds)
@@ -109,20 +126,27 @@ namespace Scd.ProjectX.Client.Messaging
         /// Disposes the resources used by the <see cref="MarketEventHub"/> class.
         /// </summary>
         /// <param name="disposing"></param>
-        protected virtual void Dispose(bool disposing)
+        protected async virtual Task Dispose(bool disposing)
         {
             if (!isDisposed)
             {
                 if (disposing)
                 {
+                    marketDepthHub?.Unsubscribe();
+                    marketDepthHub?.Dispose();
+
+                    marketTradeHub?.Unsubscribe();
+                    marketTradeHub?.Dispose();
+
+                    marketQuoteHub?.Unsubscribe();
+                    marketQuoteHub?.Dispose();
+                    
                     if (_disposeHubConnection)
                     {
-                        hubConnection?.DisposeAsync();
+                        await hubConnection.DisposeAsync();
                     }
 
-                    marketDepthHub?.Dispose();
-                    marketTradeHub?.Dispose();
-                    marketQuoteHub?.Dispose();
+                    
                 }
                 isDisposed = true;
             }
@@ -131,10 +155,10 @@ namespace Scd.ProjectX.Client.Messaging
         /// <summary>
         /// Disposes the resources used by the <see cref="UserEventHub"/> class.
         /// </summary>
-        public void Dispose()
+        public async void Dispose()
         {
             // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
-            Dispose(disposing: true);
+            await Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
     }

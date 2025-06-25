@@ -33,7 +33,7 @@ namespace Scd.ProjectX.Client
         /// </summary>
         /// <param name="api">The ProjectX API.</param>
         /// <param name="settings">The ProjectX settings.</param>
-        public ProjectXHub(AuthTokenHandler authTokenHandler, IOptions<ProjectXSettings> settings)
+        public ProjectXHub(IAuthTokenHandler authTokenHandler, IOptions<ProjectXSettings> settings)
             : this(new MarketEventHub(authTokenHandler, settings), new UserEventHub(authTokenHandler, settings))
         {
         }
@@ -108,7 +108,7 @@ namespace Scd.ProjectX.Client
         /// </summary>
         /// <returns>A task.</returns>
         public async Task StartAsync() =>
-            await Task.WhenAll(UserHub.StartAsync(), MarketHub.StartAsync());
+            await Task.WhenAll(MarketHub.StartAsync(), UserHub.StartAsync());
 
         /// <summary>
         /// Disposes the resources used by the <see cref="ProjectXHub"/> instance.

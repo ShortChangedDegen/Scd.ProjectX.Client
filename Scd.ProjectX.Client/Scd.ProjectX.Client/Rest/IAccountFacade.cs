@@ -46,6 +46,6 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <returns>The new JWT token.</returns>
         /// <exception cref="InvalidOperationException">Failed to refresh token.</exception>
-        Task<string> RefreshToken();
+        Task<string?> RefreshToken();
     }
 }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Scd.ProjectX.Client.Models.Account;
+﻿using Scd.ProjectX.Client.Models.Account;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
@@ -8,7 +7,7 @@ namespace Scd.ProjectX.Client.Rest
     /// <summary>
     /// A facade to simplify access to account-related operations in the ProjectX API.
     /// </summary>
-    /// <remarks>This is intended to provide easier access, logging, etc.</remarks>
+    /// <remarks>This is intended to provide easier access, validation, etc.</remarks>
     public class AccountFacade : IAccountFacade
     {
         private readonly IAccountApi _accountApi;
@@ -29,7 +28,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="onlyActive">Indicates whether to include only active accounts.</param>
         /// <returns>A <see cref="List{Account}"/>.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<List<Account>> GetUserAccount(bool onlyActive) =>
+        public async Task<List<Account>> GetUserAccount(bool onlyActive = true) =>
             await GetUserAccount(new AccountSearchRequest
             {
                 OnlyActiveAccounts = onlyActive
@@ -43,21 +42,15 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<List<Account>> GetUserAccount(AccountSearchRequest request)
         {
-            var response = await _accountApi.SearchAccounts(request);
-
-            if (response.Success)
+            try
             {
-                if (response.Accounts is null || response.Accounts.Count == 0)
-                {
-                    return [];
-                }
-
-                return response.Accounts;
+                var response = await _accountApi.SearchAccounts(Guard.NotNull(request, nameof(request)));
+                return response.Success ? response.Accounts ?? [] : [];                
             }
-            else
+            catch (Exception ex) 
             {
-                throw new InvalidOperationException(response.ErrorMessage);
-            }
+                throw new ProjectXClientException("Error getting user accounts", ex);
+            }                
         }
 
         /// <summary>
@@ -70,8 +63,8 @@ namespace Scd.ProjectX.Client.Rest
         public async Task<string> Authenticate(string username, string apiKey) =>
             await Authenticate(new AuthenticationRequest
             {
-                UserName = username,
-                ApiKey = apiKey
+                UserName = Guard.NotNullOrEmpty(username, nameof(username)),
+                ApiKey = Guard.NotNullOrEmpty(apiKey, nameof(apiKey)),
             });
 
         /// <summary>
@@ -80,23 +73,22 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="request">The authentication request.</param>
         /// <returns>A JWT token.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<string> Authenticate(AuthenticationRequest request)
+        public async Task<string?> Authenticate(AuthenticationRequest request)
         {
-            var response = await _accountApi.Authenticate(request);
+            Guard.NotNull(request, nameof(request));
+            Guard.NotNull(request.UserName, nameof(request.UserName));
+            Guard.NotNullOrEmpty(request.ApiKey, nameof(request.ApiKey));
 
-            if (response.Success)
+            try
             {
-                if (string.IsNullOrEmpty(response.Token))
-                {
-                    return string.Empty;
-                }
-
-                return response.Token;
+                var response = await _accountApi.Authenticate(request);
+                return response.Success ? response?.Token : string.Empty;
             }
-            else
-            {
-                throw new InvalidOperationException(response.ErrorMessage);
+            catch (Exception ex)
+            {                
+                throw new ProjectXClientException($"Error authenticating user", ex);
             }
+            
         }
 
         /// <summary>
@@ -104,21 +96,17 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <returns>The new JWT token.</returns>
         /// <exception cref="InvalidOperationException">Failed to refresh token.</exception>
-        public async Task<string> RefreshToken()
+        public async Task<string?> RefreshToken()
         {
-            var response = await _accountApi.RefreshToken();
-            if (response.Success)
+            try
             {
-                if (string.IsNullOrEmpty(response.NewToken))
-                {
-                    return string.Empty;
-                }
-                return response.NewToken;
+                var response = await _accountApi.RefreshToken();
+                return response.Success ? response?.NewToken : string.Empty;                
             }
-            else
+            catch(Exception ex)
             {
-                throw new InvalidOperationException(response.ErrorMessage);
-            }
+                throw new ProjectXClientException("Error refreshing token", ex);
+            }            
         }
     }
 }

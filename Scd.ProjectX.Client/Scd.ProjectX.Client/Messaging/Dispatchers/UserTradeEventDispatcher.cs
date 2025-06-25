@@ -8,7 +8,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     /// </summary>
     /// <param name="connection">The <see cref="HubConnection"/>.</param>
     public class UserTradeEventDispatcher(HubConnection connection) :
-        EventDispatcher<UserTradeEvent>(connection, "GatewayUserTrade"),
+        EventDispatcher<UserTradeEvent>(connection, "GatewayUserTrade", "UnsubscribeTrades"),
         IEventDispatcher<UserTradeEvent>
     {
     }

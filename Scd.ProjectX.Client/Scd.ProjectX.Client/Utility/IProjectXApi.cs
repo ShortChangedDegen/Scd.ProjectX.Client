@@ -1,6 +1,6 @@
 ﻿using Scd.ProjectX.Client.Rest;
 
-namespace Scd.ProjectX.Client
+namespace Scd.ProjectX.Client.Utility
 {
     /// <summary>
     /// Defines the interface for the TopstepX API, providing access to

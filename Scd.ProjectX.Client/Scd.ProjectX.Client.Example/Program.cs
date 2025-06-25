@@ -25,8 +25,8 @@ namespace Scd.ProjectX.Client.Example
                 })
                 .ConfigureServices((context, services) =>
                 {
-                    services.AddSingleton<AuthTokenHandler>();
-                    services.Configure<ProjectXSettings>(opts => context.Configuration.GetSection("ProjectX").Bind(opts));
+                    services.AddSingleton<IAuthTokenHandler, AuthTokenHandler>();
+                    services.Configure<ProjectXSettings>(opts => context.Configuration.GetSection(ProjectXSettings.SectionName).Bind(opts));
                     
                     services.AddSingleton<IProjectXApi, ProjectXApi>();
                     services.AddSingleton<IAccountFacade, AccountFacade>();
@@ -93,7 +93,8 @@ namespace Scd.ProjectX.Client.Example
                 Console.WriteLine($"Error: {ex}");
             }
 
-            Console.ReadLine();
+            Console.WriteLine("Press and key to exit");
+            Console.ReadKey();
         }        
     }
 }

@@ -9,6 +9,7 @@ namespace Scd.ProjectX.Client.Rest
     /// <summary>
     /// A facade to simplify access to trade-related operations in the ProjectX API.
     /// </summary>
+    /// <remarks>This is intended to provide easier access, logging, poly, etc.</remarks>
     public class TradesFacade : ITradesFacade
     {
         private readonly ITradesApi _tradesApi;
@@ -30,28 +31,15 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="endTime">The latest timestamp.</param>
         /// <returns>The matching trades.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<List<Trade>> GetTrades(int accountId, DateTime? startTime = null, DateTime? endTime = null)
-        {
-            var response = await _tradesApi.GetTrades(new SearchRequest
+        public async Task<List<Trade>> GetTrades(int accountId, DateTime startTime, DateTime? endTime = null) =>
+            await GetTrades(new SearchRequest
             {
                 AccountId = accountId,
-                StartTimestamp = startTime ?? DateTime.MinValue,
+                StartTimestamp = startTime,
                 EndTimestamp = endTime ?? DateTime.Now
             });
 
-            if (response.Success)
-            {
-                if (response.Trades is null || response.Trades.Count == 0)
-                {
-                    return [];
-                }
-                return response.Trades;
-            }
-            else
-            {
-                throw new InvalidOperationException($"Failed to retrieve trades: {response.ErrorMessage}");
-            }
-        }
+        
 
         /// <summary>
         /// Retrieves a list of trades based on the provided search request.
@@ -61,19 +49,23 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<List<Trade>> GetTrades(SearchRequest searchRequest)
         {
-            var response = await _tradesApi.GetTrades(searchRequest);
+            Guard.NotNull(searchRequest, nameof(searchRequest));
+            Guard.NotDefault(searchRequest.AccountId, nameof(searchRequest.AccountId));
+            Guard.IsEarlierDate(searchRequest.StartTimestamp, searchRequest.EndTimestamp, nameof(searchRequest.EndTimestamp));
 
-            if (response.Success)
+            try
             {
-                if (response.Trades is null || response.Trades.Count == 0)
+                var response = await _tradesApi.GetTrades(searchRequest);
+                
+                if (!response.Success)
                 {
-                    return [];
+                    throw new HttpRequestException($"Failed to retrieve trades: {response.ErrorMessage}");
                 }
-                return response.Trades;
+                return response.Trades ?? [];
             }
-            else
+            catch (Exception ex)
             {
-                throw new InvalidOperationException($"Failed to retrieve trades: {response.ErrorMessage}");
+                throw new ProjectXClientException("Error retrieving trades", ex);
             }
         }
 

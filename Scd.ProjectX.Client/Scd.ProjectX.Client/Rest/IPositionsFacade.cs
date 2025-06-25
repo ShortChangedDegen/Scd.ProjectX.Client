@@ -24,8 +24,10 @@ namespace Scd.ProjectX.Client.Rest
         /// <summary>
         /// Partially closes a contract for a specific account using the specified size.
         /// </summary>
-        /// <param name="size">The number of positions to close.</param>
-        Task PartiallyCloseContract(int size);
+        /// <param name="accountId">An account ID.</param>
+        /// <param name="contractId">A contract ID.</param>
+        /// <param name="size">The number of contracts.</param>
+        Task PartiallyCloseContract(int accountId, string contractI, int size);
 
         /// <summary>
         /// Partially closes a contract for a specific account using the specified size.

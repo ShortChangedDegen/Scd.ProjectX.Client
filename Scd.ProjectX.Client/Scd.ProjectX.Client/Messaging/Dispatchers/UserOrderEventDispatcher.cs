@@ -8,7 +8,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     /// </summary>
     /// <param name="connection">The <see cref="HubConnection"/>.</param>
     public class UserOrderEventDispatcher(HubConnection connection) :
-        EventDispatcher<UserOrderEvent>(connection, "GatewayUserOrder"),
+        EventDispatcher<UserOrderEvent>(connection, "GatewayUserOrder", "UnsubscribeOrders"),
         IEventDispatcher<UserOrderEvent>
     {
     }

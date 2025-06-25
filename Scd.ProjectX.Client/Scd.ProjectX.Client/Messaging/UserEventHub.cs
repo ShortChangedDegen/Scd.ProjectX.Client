@@ -29,30 +29,26 @@ namespace Scd.ProjectX.Client.Messaging
         protected readonly ProjectXSettings? settings;
         protected bool isDisposed;
         private bool disposeHubConnection = false;
-        private AuthTokenHandler _authTokenHandler;
+        private IAuthTokenHandler _authTokenHandler;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserEventHub"/> class.
         /// </summary>
         /// <param name="api">The ProjectX API.</param>
         /// <param name="settings">The ProjectX settings.</param>
-        public UserEventHub(AuthTokenHandler authTokenHandler, IOptions<ProjectXSettings> projectXSettings)
+        public UserEventHub(IAuthTokenHandler authTokenHandler, IOptions<ProjectXSettings> projectXSettings)
         {
-            settings = Guard.NotNull(projectXSettings.Value, nameof(projectXSettings));
+            settings = Guard.NotNull(projectXSettings?.Value, nameof(projectXSettings));
             _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));
-
-            hubBuilder = new HubConnectionBuilder()
-                .WithAutomaticReconnect();
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="UserEventHub"/> class.
-        /// </summary>
-        /// <param name="connection">The shared <see cref="HubConnection">.</param>
-        public UserEventHub(AuthTokenHandler authTokenHandler, HubConnection connection)
-        {
-            _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));
-            hubConnection = Guard.NotNull(connection, nameof(connection));
+            var getTokenTask = _authTokenHandler.GetToken();
+            if (!getTokenTask.IsCompleted)
+            {
+                getTokenTask.RunSynchronously();
+            }
+            hubConnection = new HubConnectionBuilder()
+                .WithAutomaticReconnect()
+                .WithUrl($"{settings.UserHubUrl}?access_token={getTokenTask.Result}")
+                .Build();
         }
 
         /// <summary>
@@ -61,13 +57,6 @@ namespace Scd.ProjectX.Client.Messaging
         /// <returns>A task.</returns>
         public async Task StartAsync()
         {
-            if (hubConnection == null && hubBuilder != null)
-            {
-                hubConnection = hubBuilder
-                    .WithUrl($"{settings!.UserHubUrl}?access_token={await _authTokenHandler.GetToken()}").Build();
-                disposeHubConnection = true;
-            }
-
             while (hubConnection?.State == HubConnectionState.Disconnected)
             {
                 await hubConnection.StartAsync();
@@ -106,7 +95,7 @@ namespace Scd.ProjectX.Client.Messaging
         public virtual async Task Subscribe(params IObserver<UserAccountEvent>[] observers)
         {
             subscribers.AddRange(observers.Select(UserAccountHub.Subscribe));
-            await hubConnection.InvokeAsync("SubscribeAccounts");
+            await hubConnection.InvokeAsync("SubscribeAccounts");            
         }
 
         /// <summary>
@@ -137,6 +126,7 @@ namespace Scd.ProjectX.Client.Messaging
             where T : IEvent
         {
             var subscriberTasks = new List<Task>();
+
             subscribers.AddRange(observers.Select(dispatcher.Subscribe));
 
             foreach (var id in accountIds)
@@ -157,10 +147,17 @@ namespace Scd.ProjectX.Client.Messaging
                         hubConnection?.DisposeAsync();
                     }
 
+                    userAccountHub?.Unsubscribe();
                     userAccountHub?.Dispose();
+
+                    userOrderHub?.Unsubscribe();
                     userOrderHub?.Dispose();
+
+                    userPositionHub?.Unsubscribe();
                     userPositionHub?.Dispose();
-                    userTradeHub?.Dispose();
+
+                    userTradeHub?.Unsubscribe();
+                    userTradeHub?.Dispose();                    
                 }
                 isDisposed = true;
             }

@@ -8,8 +8,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     /// </summary>
     /// <param name="connection">The <see cref="HubConnection"/>.</param>
     public class MarketTradeDispatcher(HubConnection connection) :
-
-        MultiEventDispatcher<List<MarketTradeEvent>, MarketTradeEvent, string>(connection, "GatewayTrade"),
+        MultiEventDispatcher<List<MarketTradeEvent>, MarketTradeEvent, string>(connection, "GatewayTrade", "UnsubscribeContractTrades"),
         IEventDispatcher<MarketTradeEvent>
     {
     }

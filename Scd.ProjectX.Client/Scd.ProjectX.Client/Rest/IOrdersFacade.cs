@@ -5,7 +5,7 @@ namespace Scd.ProjectX.Client.Rest
     /// <summary>
     /// Defines order-related operations in the ProjectX API.
     /// </summary>
-    public interface IOrderFacade
+    public interface IOrdersFacade
     {
         /// <summary>
         /// Cancels an order by its ID for the specified account.
@@ -27,7 +27,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="request">The request.</param>
         /// <returns>The new order ID.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        Task<int?> CreateOrder(CreateOrderRequest request);
+        Task CreateOrder(CreateOrderRequest request);
 
         /// <summary>
         /// Retrieves a list of open orders

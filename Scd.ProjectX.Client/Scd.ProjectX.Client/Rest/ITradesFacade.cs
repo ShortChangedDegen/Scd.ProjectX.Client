@@ -15,7 +15,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="endTime">The latest timestamp.</param>
         /// <returns>The matching trades.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        Task<List<Trade>> GetTrades(int accountId, DateTime? startTime = null, DateTime? endTime = null);
+        Task<List<Trade>> GetTrades(int accountId, DateTime startTime, DateTime? endTime = null);
 
         /// <summary>
         /// Retrieves a list of trades based on the provided search request.

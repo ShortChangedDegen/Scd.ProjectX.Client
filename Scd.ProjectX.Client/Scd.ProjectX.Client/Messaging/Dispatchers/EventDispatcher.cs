@@ -13,9 +13,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     {
         protected HubConnection hubConnection;
         protected bool isDisposed;
-        protected string? publishMethod;
         protected List<IObserver<TEvent>> observers = new();
-        protected bool isInitialized = false;
 
         // This needs to be moved to a cache or a persisted store.
         protected List<TEvent> events = new();
@@ -25,16 +23,13 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
         /// class with the specified <paramref name="connection"/>.
         /// </summary>
         /// <param name="connection">The <see cref="HubConnection"/>.</param>
-        /// /// <param name="publishMethodName">The method name used to subscribe to published events.</param>
-        protected EventDispatcher(HubConnection connection, string publishMethodName)
+        /// <param name="publishMethodName">The method name used to subscribe to published events.</param>
+        /// <param name="unsubscribeMethodName"> The method name used to unsubscribe from events.</param>
+        protected EventDispatcher(HubConnection connection, string publishMethodName, string unsubscribeMethodName)
         {
             hubConnection = Guard.NotNull(connection, nameof(connection));
-            publishMethod = Guard.NotNullOrEmpty(publishMethodName, nameof(publishMethodName));
-        }
-
-        public virtual void Init()
-        {
-            Guard.NotNullOrEmpty(PublishMethodName, nameof(PublishMethodName));
+            PublishMethodName = Guard.NotNullOrEmpty(publishMethodName, nameof(publishMethodName));
+            UnsubscribeMethodName = Guard.NotNullOrEmpty(unsubscribeMethodName, nameof(unsubscribeMethodName));
             hubConnection.On<TEvent>(PublishMethodName, Publish);
         }
 
@@ -44,8 +39,18 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
         /// </summary>
         public virtual string PublishMethodName
         {
-            get => publishMethod;
-            protected set => publishMethod = value;
+            get;
+            protected set;
+        }
+
+        /// <summary>
+        /// Gets the name of the method used to unsubscribe to events
+        /// from the hub.
+        /// </summary>
+        public virtual string UnsubscribeMethodName
+        {
+            get;
+            protected set;
         }
 
         /// <summary>
@@ -65,18 +70,11 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
         /// <summary>
         /// Subscribes an observer to the event hub.
         /// </summary>
-        /// <param name="observer">The <see cref="IObserver{T}"/>.</param>
-        /// <returns>A disposable instance of the <see cref="IObserver{T}"/>.</returns>
+        /// <param name="observer">The <see cref="IObserver{TEvent}"/>.</param>
+        /// <returns>A disposable instance of the <see cref="IObserver{TEvent}"/>.</returns>
         public virtual IDisposable Subscribe(IObserver<TEvent> observer)
         {
             Guard.NotNull(observer, nameof(observer));
-
-            if (!isInitialized)
-            {
-                Init();
-                isInitialized = true;
-            }
-
             if (!observers.Contains(observer))
             {
                 observers.Add(observer);
@@ -86,6 +84,23 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
                 }
             }
             return new Unsubscriber<TEvent>(observers, observer);
+        }
+
+        /// <summary>
+        /// Unsubscribes from the event hub using the specified method name.
+        /// </summary>
+        /// <param name="unsubscribeMethod">The hub method to unsubscribe from events during cleanup.</param>
+        /// <exception cref="ProjectXClientException"></exception>
+        public async virtual Task Unsubscribe() 
+        { 
+            try 
+            {
+                await hubConnection.InvokeAsync<TEvent>(UnsubscribeMethodName);
+            } 
+            catch (Exception ex) 
+            {
+                throw new ProjectXClientException($"Failed to unsubscribe from {UnsubscribeMethodName}.", ex);
+            }
         }
 
         /// <summary>
@@ -114,6 +129,6 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
                 // This is shared. Just set locaL reference to null.
                 isDisposed = true;
             }
-        }
+        }        
     }
 }

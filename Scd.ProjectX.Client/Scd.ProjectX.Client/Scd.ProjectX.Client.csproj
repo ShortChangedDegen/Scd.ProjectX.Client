@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <InternalsVisibleTo Include="ShortChangedDegen.ProjectX.Sdk.Tests" />
+    <InternalsVisibleTo Include="Scd.ProjectX.Client.Tests" />
   </ItemGroup>
 
 </Project>

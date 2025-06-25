@@ -53,3 +53,4 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 /Scd.ProjectX.Client/.vs/Scd.ProjectX.Client
+/Scd.ProjectX.Client/.vs/ProjectEvaluation

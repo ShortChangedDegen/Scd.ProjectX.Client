@@ -11,15 +11,15 @@ namespace Scd.ProjectX.Client
     /// <summary>
     /// This service locator or factory will be removed when DI is implemented.
     /// </summary>
-    public class ProjectXApi(IOptions<ProjectXSettings> options, AuthTokenHandler authTokenHandler) : IProjectXApi
+    public class ProjectXApi(IOptions<ProjectXSettings> options, IAuthTokenHandler authTokenHandler) : IProjectXApi
     {
         private IAccountFacade? _accountFacade;
         private IMarketDataFacade? _marketDataFacade;
-        private IOrderFacade? _ordersFacade;
+        private IOrdersFacade? _ordersFacade;
         private IPositionsFacade? _positionsFacade;
         private ITradesFacade? _tradesFacade;
 
-        private AuthTokenHandler _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));
+        private readonly IAuthTokenHandler _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));
 
         /// <summary>
         /// Gets the account management API for accessing account-related operations.
@@ -36,8 +36,8 @@ namespace Scd.ProjectX.Client
         /// <summary>
         /// Gets the orders API for accessing order-related operations.
         /// </summary>
-        public virtual IOrderFacade Orders =>
-            _ordersFacade ??= new OrderFacade(CreateService<IOrdersApi>());
+        public virtual IOrdersFacade Orders =>
+            _ordersFacade ??= new OrdersFacade(CreateService<IOrdersApi>());
 
         /// <summary>
         /// Gets the positions API for accessing position-related operations.

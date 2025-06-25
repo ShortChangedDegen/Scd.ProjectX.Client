@@ -5,6 +5,8 @@ namespace Scd.ProjectX.Client.Example.Observers
 {
     public class MarketQuoteObserver : IObserver<MarketQuoteEvent>
     {
+        private int _throughputCounter = 0;
+
         public void OnCompleted()
         {
             Console.WriteLine($"onCompleted: {nameof(MarketQuoteObserver)}");
@@ -17,8 +19,8 @@ namespace Scd.ProjectX.Client.Example.Observers
 
         public void OnNext(MarketQuoteEvent value)
         {
-            var @event = JsonSerializer.Serialize(value);
-            Console.WriteLine(@event);
+            var @event = JsonSerializer.Serialize(value);            
+            Console.WriteLine($"MarketQuoteEvent ({++_throughputCounter}):\n {@event}");
         }
     }
 }

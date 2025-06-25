@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Scd.ProjectX.Client.Models.Orders;
+﻿using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
@@ -8,8 +7,8 @@ namespace Scd.ProjectX.Client.Rest
     /// <summary>
     /// A facade to simplify access to order-related operations in the ProjectX API.
     /// </summary>
-    /// <remarks>This is intended to provide easier access, logging, etc.</remarks>
-    public class OrderFacade : IOrderFacade
+    /// <remarks>This is intended to provide easier access, logging, poly, etc.</remarks>
+    public class OrdersFacade : IOrdersFacade
     {
         private readonly IOrdersApi _ordersApi;
 
@@ -17,7 +16,7 @@ namespace Scd.ProjectX.Client.Rest
         /// Initializes a new instance of the <see cref="OrdersFacade"/> class.
         /// </summary>
         /// <param name="ordersApi">An <see cref="IOrdersApi"/> implementation.</param>
-        public OrderFacade(IOrdersApi ordersApi)
+        public OrdersFacade(IOrdersApi ordersApi)
         {
             _ordersApi = Guard.NotNull(ordersApi, nameof(ordersApi));
         }
@@ -45,14 +44,21 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<List<Order>> GetOrders(SearchRequest request)
         {
-            var response = await _ordersApi.GetOrders(request);
-            if (response.Success)
+            Guard.NotNull(request, nameof(request));
+
+            if (request.EndTimestamp != null)
             {
-                return response.Orders ?? [];
+                Guard.IsEarlierDate(request.StartTimestamp, request.EndTimestamp.Value, nameof(request.EndTimestamp));
             }
-            else
+
+            try
             {
-                throw new InvalidOperationException($"Failed to retrieve orders: {response.ErrorMessage}");
+                var response = await _ordersApi.GetOrders(request);
+                return response.Success ? response.Orders ?? [] : []; //  TODO: Add Logging.
+            }
+            catch (Exception ex)
+            {
+                throw new ProjectXClientException("Error getting orders", ex);
             }
         }
 
@@ -64,15 +70,14 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<List<Order>> GetOpenOrders(int accountId)
         {
-            var response = await _ordersApi.GetOpenOrders(accountId);
-
-            if (response.Success)
+            try
             {
-                return response.Orders ?? [];
+                var response = await _ordersApi.GetOpenOrders(accountId);
+                return response.Success ? response.Orders ?? [] : [];//  TODO: Add Logging.
             }
-            else
+            catch (Exception ex)
             {
-                throw new InvalidOperationException($"Failed to retrieve orders: {response.ErrorMessage}");
+                throw new ProjectXClientException("Error getting open orders", ex);
             }
         }
 
@@ -82,16 +87,26 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="request">The request.</param>
         /// <returns>The new order ID.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<int?> CreateOrder(CreateOrderRequest request)
+        public async Task CreateOrder(CreateOrderRequest request)
         {
-            var response = await _ordersApi.CreateOrder(request);
-            if (response.Success)
+            Guard.NotNull(request, nameof(request));
+            Guard.IsGreaterThan(0, request.Size, nameof(request.Size));
+            Guard.NotNullOrEmpty(request.ContractId, nameof(request.ContractId));
+            Guard.NotDefault(request.Type, nameof(request.Type));
+
+            try
             {
-                return response.OrderId;
+                var response = await _ordersApi.CreateOrder(request);
+                if (!response.Success)
+                {
+                    throw new HttpRequestException($"Failed to create trades: {response.ErrorMessage}");
+                }
+                // Need logging/ Woohoo magic numbers (logging)
+                // Need to do better than just returning null.
             }
-            else
-            {
-                throw new InvalidOperationException($"Failed to create order: {response.ErrorMessage}");
+            catch (Exception ex)
+            { 
+                throw new ProjectXClientException($"Error creating orders.", ex);
             }
         }
 
@@ -115,10 +130,21 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="InvalidOperationException"></exception>
         public async Task CancelOrder(CancelOrderRequest request)
         {
-            var response = await _ordersApi.CancelOrder(request);
-            if (!response.Success)
+            Guard.NotNull(request, nameof(request));
+            Guard.NotDefault(request.AccountId, nameof(request.AccountId));
+            Guard.NotDefault(request.OrderId, nameof(request.OrderId));
+
+            try
             {
-                throw new InvalidOperationException($"Failed to cancel order: {response.ErrorMessage}");
+                var response = await _ordersApi.CancelOrder(request);
+                if (!response.Success)
+                {
+                    throw new ProjectXClientException($"Failed to cancel order: {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ProjectXClientException($"Error cancelling order.", ex);
             }
         }
 
@@ -141,10 +167,21 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="InvalidOperationException"></exception>
         public async Task UpdateOrder(ModifyRequest request)
         {
-            var response = await _ordersApi.UpdateOrder(request);
-            if (!response.Success)
+            Guard.NotNull(request, nameof(request));
+            Guard.NotDefault(request.AccountId, nameof(request.AccountId));
+            Guard.NotDefault(request.OrderId, nameof(request.OrderId));
+
+            try
             {
-                throw new InvalidOperationException($"Failed to update order: {response.ErrorMessage}");
+                var response = await _ordersApi.UpdateOrder(request);
+                if (!response.Success)
+                {
+                    throw new ProjectXClientException($"Failed to update order: {response.ErrorMessage}");
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new ProjectXClientException($"Failed to update order.", ex);
             }
         }
     }

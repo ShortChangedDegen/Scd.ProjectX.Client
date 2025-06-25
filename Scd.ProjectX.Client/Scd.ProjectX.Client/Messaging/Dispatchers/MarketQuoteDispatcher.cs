@@ -7,11 +7,15 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     /// <summary>
     /// Initializes a new instance of the <see cref="MarketQuoteDispatcher"/> class.
     /// </summary>
-    public class MarketQuoteDispatcher(HubConnection connection) :
-        EventDispatcher<MarketQuoteEvent>(connection, "GatewayQuote"),
-        IEventDispatcher<MarketQuoteEvent>
+    public class MarketQuoteDispatcher 
+        :   EventDispatcher<MarketQuoteEvent>,
+            IEventDispatcher<MarketQuoteEvent>
     {
-        public override void Init() => hubConnection.On<string, MarketQuoteEvent>(PublishMethodName, this.Publish);
+        public MarketQuoteDispatcher(HubConnection connection)
+            : base(connection, "GatewayQuote", "UnsubscribeContractQuotes")
+        {            
+            hubConnection.On<string, MarketQuoteEvent>(PublishMethodName, Publish);
+        }
 
         /// <summary>
         /// Publishes an event to all observers and stores it in the event list.

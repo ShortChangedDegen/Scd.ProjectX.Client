@@ -9,7 +9,7 @@ namespace Scd.ProjectX.Client.Rest
     /// <summary>
     /// A facade to simplify access to market-related operations in the ProjectX API.
     /// </summary>
-    /// <remarks>This is intended to provide easier access, logging, etc.</remarks>
+    /// <remarks>This is intended to provide easier access, logging, poly, etc.</remarks>
     public class MarketDataFacade : IMarketDataFacade
     {
         private readonly IMarketDataApi _marketDataApi;
@@ -37,8 +37,8 @@ namespace Scd.ProjectX.Client.Rest
         /// <returns>The matching bars.</returns>
         public async Task<List<Candle>> GetBars(
             string contractId,
-            DateTime? startTime,
-            DateTime? endTime,
+            DateTime startTime,
+            DateTime endTime,
             int unitLength = 5,
             Unit unit = Unit.Minute,
             int limit = 100,
@@ -46,9 +46,9 @@ namespace Scd.ProjectX.Client.Rest
             bool includePartialBar = false) =>
             await GetBars(new BarsRequest
             {
-                ContractId = contractId,
+                ContractId = Guard.NotNullOrEmpty(contractId, nameof(contractId)),
                 StartTime = startTime,
-                EndTime = endTime,
+                EndTime = Guard.IsEarlierDate(startTime, endTime, nameof(endTime)),
                 UnitNumber = unitLength,
                 Unit = unit,
                 Limit = limit,
@@ -62,14 +62,15 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="request">The request object.</param>
         public async Task<List<Candle>> GetBars(BarsRequest request)
         {
-            var response = await _marketDataApi.GetBars(request);
-            if (response.Success)
+            Guard.NotNull(request, nameof(request));
+            try
             {
-                return response.Bars;
-            }
-            else
+                var response = await _marketDataApi.GetBars(request);
+                return response.Success ? response.Bars : [];                
+            } 
+            catch(Exception ex)
             {
-                throw new InvalidOperationException(response.ErrorMessage);
+                throw new ProjectXClientException("Error getting candle data", ex);
             }
         }
 
@@ -97,15 +98,18 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="InvalidOperationException"></exception>
         public async Task<List<Contract>> GetContracts(ContractSearchRequest request)
         {
-            var response = await _marketDataApi.GetContracts(request);
-            if (response.Success)
+            Guard.NotNull(request, nameof(request));
+
+            try
             {
-                return response.Contracts;
-            }
-            else
+                var response = await _marketDataApi.GetContracts(request);
+                return response.Success ? response.Contracts : [];            
+            } 
+            catch(Exception ex)
             {
-                throw new InvalidOperationException(response.ErrorMessage);
+                throw new ProjectXClientException("Error getting contracts", ex);
             }
+            
         }
     }
 }

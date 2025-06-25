@@ -26,7 +26,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="live">Whether to retrieve bars using the sim or live data subscription.</param>
         /// <param name="includePartialBar">Whether to include a partial bar representing the current time unit.</param>
         /// <returns>The matching bars.</returns>
-        Task<List<Candle>> GetBars(string contractId, DateTime? startTime, DateTime? endTime, int unitLength = 5, Unit unit = Unit.Minute, int limit = 100, bool live = true, bool includePartialBar = false);
+        Task<List<Candle>> GetBars(string contractId, DateTime startTime, DateTime endTime, int unitLength = 5, Unit unit = Unit.Minute, int limit = 100, bool live = true, bool includePartialBar = false);
         
         /// <summary>
         /// Retrieves a list of contracts based on the provided search request.
@@ -43,6 +43,6 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="query">Search text</param>
         /// <param name="live">Whether to retrieve bars using the sim or live data subscription.</param>
         /// <returns>The matching contracts.</returns>
-        Task<List<Contract>> GetContracts(string contractId, string query, bool live = true);
+        Task<List<Contract>> GetContracts(string contractId ="", string query = "", bool live = true);
     }
 }

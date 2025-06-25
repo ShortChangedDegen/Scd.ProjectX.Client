@@ -8,7 +8,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     /// </summary>
     /// <param name="connection">The <see cref="HubConnection"/>.</param>
     public class UserPositionEventDispatcher(HubConnection connection) :
-        EventDispatcher<UserPositionEvent>(connection, "GatewayUserPosition"),
+        EventDispatcher<UserPositionEvent>(connection, "GatewayUserPosition", "UnsubscribePositions"),
         IEventDispatcher<UserPositionEvent>
     {
     }

@@ -16,7 +16,7 @@
         /// <remarks>
         /// Consider breaking into two separate models.
         /// </remarks>
-        public DateTime? StartTimestamp { get; set; }
+        public required DateTime StartTimestamp { get; set; }
 
         /// <summary>
         /// Gets or sets the end timestamp for the search.

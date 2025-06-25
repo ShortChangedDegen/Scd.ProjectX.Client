@@ -52,3 +52,4 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+/Scd.ProjectX.Client/.vs/Scd.ProjectX.Client

@@ -2,9 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Scd.ProjectX.Client.Example.Observers;
-using Scd.ProjectX.Client.Messaging;
 using Scd.ProjectX.Client.Models.MarketData;
-using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Utility;
 
 namespace Scd.ProjectX.Client.Example
@@ -15,31 +13,15 @@ namespace Scd.ProjectX.Client.Example
 
         private static async Task Main(string[] args)
         {
-            var builder = Host.CreateDefaultBuilder(args)
+            var app = Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
                     config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
                     config.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
                     config.AddEnvironmentVariables();
                 })
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddSingleton<IAuthTokenHandler, AuthTokenHandler>();
-                    services.Configure<ProjectXSettings>(opts => context.Configuration.GetSection(ProjectXSettings.SectionName).Bind(opts));
-
-                    services.AddSingleton<IProjectXApi, ProjectXApi>();
-                    services.AddSingleton<IAccountFacade, AccountFacade>();
-                    services.AddSingleton<IMarketDataFacade, MarketDataFacade>();
-                    services.AddSingleton<IOrderFacade, OrderFacade>();
-                    services.AddSingleton<IPositionsFacade, PositionsFacade>();
-                    services.AddSingleton<ITradesFacade, TradesFacade>();
-
-                    services.AddSingleton<IProjectXHub, ProjectXHub>();
-                    services.AddSingleton<IUserEventHub, UserEventHub>();
-                    services.AddSingleton<IMarketEventHub, MarketEventHub>();
-                });
-
-            var app = builder.Build();
+                .AddProjectXClientServices()
+                .Build();            
 
             try
             {
@@ -67,10 +49,8 @@ namespace Scd.ProjectX.Client.Example
                 var accountIds = accounts?.Select(a => a.Id!);
                 var contractIds = contracts.Select(x => x.Id!);
 
-                //await GetHistory(contractIds.First());
-
                 var projectXHub = app.Services.GetService<IProjectXHub>();
-                await projectXHub!.StartAsync();
+                await projectXHub.StartAsync();
 
                 if (contractIds.Any())
                 {
@@ -85,7 +65,7 @@ namespace Scd.ProjectX.Client.Example
                     await projectXHub.Subscribe(accountIds, new UserOrderObserver());
                     await projectXHub.Subscribe(accountIds, new UserTradeObserver());
                     await projectXHub.Subscribe(accountIds, new UserPositionObserver());
-                }
+                }                
             }
             catch (Exception ex)
             {

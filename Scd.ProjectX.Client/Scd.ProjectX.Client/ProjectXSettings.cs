@@ -8,16 +8,18 @@
         /// <summary>
         /// Gets the section name.
         /// </summary>
-        public const string SectionName = "ProjectXSdk";
+        public const string SectionName = "ProjectXClient";
 
         /// <summary>
         /// Gets or sets the username for the API authentication.
         /// </summary>
         public virtual string Username { get; set; }
+
         /// <summary>
         /// Gets or sets the API key for the API authentication.
         /// </summary>
         public virtual string ApiKey { get; set; }
+
         /// <summary>
         /// Gets or sets the base URL for the TopstepX API.
         /// </summary>

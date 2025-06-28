@@ -39,7 +39,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="onlyActive">Indicates whether to include only active accounts.</param>
         /// <returns>A <see cref="List{Account}"/>.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        Task<List<Account>> GetUserAccount(bool onlyActive);
+        Task<List<Account>> GetUserAccount(bool onlyActive = true);
 
         /// <summary>
         /// Refreshes the authentication token for the user account.

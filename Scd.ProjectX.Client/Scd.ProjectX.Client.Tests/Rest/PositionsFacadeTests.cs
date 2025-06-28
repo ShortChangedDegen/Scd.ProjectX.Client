@@ -1,16 +1,10 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
 using Scd.ProjectX.Client.Models;
-using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Models.Positions;
 using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scd.ProjectX.Client.Tests.Rest
 {
@@ -77,7 +71,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             };
 
             A.CallTo(() => _positionsApi.CloseContract(request))
-                .Returns(new DefaultResponse{ Success = false, ErrorMessage = "Test Error" });
+                .Returns(new DefaultResponse { Success = false, ErrorMessage = "Test Error" });
 
             var actualException = await Assert.ThrowsAsync<ProjectXClientException>(() => _positionsFacade.CloseContract(request));
             actualException.Message.Should().Contain("Test Error");
@@ -106,7 +100,6 @@ namespace Scd.ProjectX.Client.Tests.Rest
 
             var actualException = await Assert.ThrowsAsync<ArgumentNullException>(() => _positionsFacade.PartiallyCloseContract(request));
             actualException.Message.Should().Contain("request");
-
         }
 
         [Fact]
@@ -135,7 +128,6 @@ namespace Scd.ProjectX.Client.Tests.Rest
 
             var actualException = await Assert.ThrowsAsync<ArgumentNullException>(() => _positionsFacade.PartiallyCloseContract(request));
             actualException.Message.Should().Contain("ContractId");
-
         }
 
         [Fact]
@@ -156,7 +148,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         public async Task SearchOpenPositions_ShouldThrowArgumentException_WhenAccountIdIsDefault()
         {
             int accountId = default;
-            
+
             var actualException = await Assert.ThrowsAsync<ArgumentException>(() => _positionsFacade.SearchOpenPositions(accountId));
             actualException.Message.Should().Contain("accountId");
         }

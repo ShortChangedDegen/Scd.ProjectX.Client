@@ -16,6 +16,5 @@ namespace Scd.ProjectX.Client.Example.Observers
             var @event = JsonSerializer.Serialize(value);
             Console.WriteLine($"MarketDepthEvent ({++_throughputCounter}):\n {@event}");
         }
-            
     }
 }

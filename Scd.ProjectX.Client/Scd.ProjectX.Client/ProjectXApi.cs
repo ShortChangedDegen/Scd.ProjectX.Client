@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Refit;
 using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Rest.Apis;

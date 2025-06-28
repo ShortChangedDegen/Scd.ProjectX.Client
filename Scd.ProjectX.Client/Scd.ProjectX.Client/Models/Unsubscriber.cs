@@ -20,7 +20,7 @@ namespace Scd.ProjectX.Client.Models
             {
                 return;
             }
-            
+
             if (isDisposing)
             {
                 if (_observers.Contains(_observer))
@@ -29,7 +29,6 @@ namespace Scd.ProjectX.Client.Models
                 }
             }
             _isDisposed = true;
-
         }
 
         public void Dispose()

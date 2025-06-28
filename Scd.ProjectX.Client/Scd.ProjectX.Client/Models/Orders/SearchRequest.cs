@@ -8,7 +8,7 @@
         /// <summary>
         /// Gets or sets the account ID.
         /// </summary>
-        public required int AccountId { get; set; }
+        public int AccountId { get; set; }
 
         /// <summary>
         /// Gets or sets the start timestamp for the search.
@@ -16,7 +16,7 @@
         /// <remarks>
         /// Consider breaking into two separate models.
         /// </remarks>
-        public required DateTime StartTimestamp { get; set; }
+        public DateTime StartTimestamp { get; set; }
 
         /// <summary>
         /// Gets or sets the end timestamp for the search.

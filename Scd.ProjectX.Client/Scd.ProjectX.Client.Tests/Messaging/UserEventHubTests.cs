@@ -1,15 +1,10 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
-using Microsoft.AspNetCore.Connections;
-using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.AspNetCore.SignalR.Protocol;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Scd.ProjectX.Client.Messaging;
 using Scd.ProjectX.Client.Utility;
-using System.Net;
 
-namespace Scd.ProjectX.Client.Tests.Dispatchers
+namespace Scd.ProjectX.Client.Tests.Messaging
 {
     public class UserEventHubTests
     {
@@ -19,7 +14,7 @@ namespace Scd.ProjectX.Client.Tests.Dispatchers
         public UserEventHubTests()
         {
             _providedAuthTokenHandler = A.Fake<IAuthTokenHandler>();
-            _providedSettings = Options.Create(new ProjectXSettings 
+            _providedSettings = Options.Create(new ProjectXSettings
             {
                 ApiKey = "ApiKey",
                 ApiUrl = "https://api.topstepx.com",
@@ -33,7 +28,7 @@ namespace Scd.ProjectX.Client.Tests.Dispatchers
 
         [Fact]
         public void MarketEventHub_ShouldThrowArgumentNullException_WhenAuthTokenHandlerIsNull()
-        {            
+        {
             AuthTokenHandler? authTokenHandler = null;
             Assert.Throws<ArgumentNullException>(() => new UserEventHub(authTokenHandler, _providedSettings));
         }
@@ -49,8 +44,8 @@ namespace Scd.ProjectX.Client.Tests.Dispatchers
         [Fact(Skip = "External Calls from HubConnection")]
         public async Task StartAsync_ShouldGetAuthToken()
         {
-            const string providedUrl = "https://api.topstepx.com";    
-            
+            const string providedUrl = "https://api.topstepx.com";
+
             A.CallTo(() => _providedAuthTokenHandler.GetToken())
                 .Returns(Task.FromResult("fake-auth-token"));
 

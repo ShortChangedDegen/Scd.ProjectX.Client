@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Scd.ProjectX.Client.Models.Orders;
+﻿using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 

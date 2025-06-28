@@ -48,7 +48,6 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _marketDataApi.GetBars(A<BarsRequest>._))
                 .Returns(new CandleResponse { Bars = expectedBars, Success = true });
 
-
             // Act
             var result = await facade.GetBars(request);
             // Assert
@@ -133,8 +132,8 @@ namespace Scd.ProjectX.Client.Tests.Rest
         [Fact]
         public async Task GetContracts_ShouldReturnContractsCollection_WhenProvidedValidParameters()
         {
-            var contracts = new List<Contract> 
-            {            
+            var contracts = new List<Contract>
+            {
                 new Contract { Id = "1", Name = "Contract 1" },
                 new Contract { Id = "2", Name = "Contract 2" }
             };

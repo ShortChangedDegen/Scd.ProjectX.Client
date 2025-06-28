@@ -45,12 +45,12 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _accountApi.SearchAccounts(Guard.NotNull(request, nameof(request)));
-                return response.Success ? response.Accounts ?? [] : [];                
+                return response.Success ? response.Accounts ?? [] : [];
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 throw new ProjectXClientException("Error getting user accounts", ex);
-            }                
+            }
         }
 
         /// <summary>
@@ -85,10 +85,9 @@ namespace Scd.ProjectX.Client.Rest
                 return response.Success ? response?.Token : string.Empty;
             }
             catch (Exception ex)
-            {                
+            {
                 throw new ProjectXClientException($"Error authenticating user", ex);
             }
-            
         }
 
         /// <summary>
@@ -101,12 +100,12 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _accountApi.RefreshToken();
-                return response.Success ? response?.NewToken : string.Empty;                
+                return response.Success ? response?.NewToken : string.Empty;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new ProjectXClientException("Error refreshing token", ex);
-            }            
+            }
         }
     }
 }

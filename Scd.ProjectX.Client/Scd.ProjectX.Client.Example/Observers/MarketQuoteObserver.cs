@@ -19,7 +19,7 @@ namespace Scd.ProjectX.Client.Example.Observers
 
         public void OnNext(MarketQuoteEvent value)
         {
-            var @event = JsonSerializer.Serialize(value);            
+            var @event = JsonSerializer.Serialize(value);
             Console.WriteLine($"MarketQuoteEvent ({++_throughputCounter}):\n {@event}");
         }
     }

@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Scd.ProjectX.Client.Models.Positions;
+﻿using Scd.ProjectX.Client.Models.Positions;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
@@ -56,7 +55,7 @@ namespace Scd.ProjectX.Client.Rest
             catch (Exception ex)
             {
                 throw new ProjectXClientException($"Error closing contract: {ex.Message}", ex);
-            }   
+            }
         }
 
         /// <summary>
@@ -114,7 +113,7 @@ namespace Scd.ProjectX.Client.Rest
                 {
                     return response.Positions ?? new List<Position>();
                 }
-                throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}");                
+                throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}");
             }
             catch (Exception ex)
             {

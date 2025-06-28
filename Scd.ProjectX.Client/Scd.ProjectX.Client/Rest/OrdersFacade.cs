@@ -105,7 +105,7 @@ namespace Scd.ProjectX.Client.Rest
                 // Need to do better than just returning null.
             }
             catch (Exception ex)
-            { 
+            {
                 throw new ProjectXClientException($"Error creating orders.", ex);
             }
         }

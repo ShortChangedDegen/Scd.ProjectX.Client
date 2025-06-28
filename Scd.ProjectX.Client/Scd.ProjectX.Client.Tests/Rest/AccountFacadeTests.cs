@@ -21,14 +21,13 @@ namespace Scd.ProjectX.Client.Tests.Rest
         {
             var thrownException = Assert.Throws<ArgumentNullException>(() => new AccountFacade(null));
             thrownException.Message.Should().Contain("accountApi");
-
         }
 
         [Fact]
         public void GetUserAccount_ShouldThrowArgumentNullException_WhenProvidedRequestIsNull()
         {
             var accountFacade = new AccountFacade(_accountApi);
-            var actualException = Assert.ThrowsAsync<ArgumentNullException>(() => accountFacade.GetUserAccount(null));            
+            var actualException = Assert.ThrowsAsync<ArgumentNullException>(() => accountFacade.GetUserAccount(null));
         }
 
         [Fact]
@@ -38,8 +37,6 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _accountApi.SearchAccounts(A<AccountSearchRequest>._)).Throws(new Exception("Test Error"));
 
             var actualException = Assert.ThrowsAsync<ProjectXClientException>(async () => await accountFacade.GetUserAccount(true));
-
-            
         }
 
         [Fact]
@@ -68,7 +65,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 .Throws(new Exception("Test Error"));
             var accountFacade = new AccountFacade(_accountApi);
 
-            var exception = Assert.ThrowsAsync<ProjectXClientException>(() => accountFacade.Authenticate(new AuthenticationRequest { ApiKey = "test", UserName = "test"}));
+            var exception = Assert.ThrowsAsync<ProjectXClientException>(() => accountFacade.Authenticate(new AuthenticationRequest { ApiKey = "test", UserName = "test" }));
             exception.Result.Message.Should().Contain("Error authenticating user");
         }
 
@@ -87,7 +84,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                     UserName = "username",
                     ApiKey = "password"
                 });
-            
+
             response.Should().Be(expectedToken);
         }
 
@@ -96,11 +93,11 @@ namespace Scd.ProjectX.Client.Tests.Rest
         {
             var expectedToken = string.Empty;
             A.CallTo(() => _accountApi.Authenticate(A<AuthenticationRequest>._))
-                .Returns(new AuthenticationResponse { Success = false, Token = "NotAnEmptyToken"});
+                .Returns(new AuthenticationResponse { Success = false, Token = "NotAnEmptyToken" });
 
             var accountFacade = new AccountFacade(_accountApi);
 
-            var response = await accountFacade.Authenticate(new AuthenticationRequest{ UserName = "username", ApiKey = "password"});
+            var response = await accountFacade.Authenticate(new AuthenticationRequest { UserName = "username", ApiKey = "password" });
 
             response.Should().Be(expectedToken);
         }

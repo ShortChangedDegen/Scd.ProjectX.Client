@@ -47,9 +47,9 @@ namespace Scd.ProjectX.Client.Messaging
             }
             catch (InvalidOperationException oEx)
             {
-                // Log and ignore RunSynchronously already.                
+                // Log and ignore RunSynchronously already.
             }
-            
+
             // Ensure the token is retrieved before building the connection
             hubConnection = new HubConnectionBuilder()
                 .WithAutomaticReconnect()
@@ -126,7 +126,7 @@ namespace Scd.ProjectX.Client.Messaging
         /// Disposes the resources used by the <see cref="MarketEventHub"/> class.
         /// </summary>
         /// <param name="disposing"></param>
-        protected async virtual Task Dispose(bool disposing)
+        protected virtual async Task Dispose(bool disposing)
         {
             if (!isDisposed)
             {
@@ -140,13 +140,11 @@ namespace Scd.ProjectX.Client.Messaging
 
                     marketQuoteHub?.Unsubscribe();
                     marketQuoteHub?.Dispose();
-                    
+
                     if (_disposeHubConnection)
                     {
                         await hubConnection.DisposeAsync();
                     }
-
-                    
                 }
                 isDisposed = true;
             }

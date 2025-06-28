@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Scd.ProjectX.Client.Models.MarketData;
+﻿using Scd.ProjectX.Client.Models.MarketData;
 using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
@@ -66,9 +65,9 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _marketDataApi.GetBars(request);
-                return response.Success ? response.Bars : [];                
-            } 
-            catch(Exception ex)
+                return response.Success ? response.Bars : [];
+            }
+            catch (Exception ex)
             {
                 throw new ProjectXClientException("Error getting candle data", ex);
             }
@@ -89,7 +88,6 @@ namespace Scd.ProjectX.Client.Rest
                 Live = live
             });
 
-
         /// <summary>
         /// Retrieves a list of contracts based on the provided search request.
         /// </summary>
@@ -103,13 +101,12 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _marketDataApi.GetContracts(request);
-                return response.Success ? response.Contracts : [];            
-            } 
-            catch(Exception ex)
+                return response.Success ? response.Contracts : [];
+            }
+            catch (Exception ex)
             {
                 throw new ProjectXClientException("Error getting contracts", ex);
             }
-            
         }
     }
 }

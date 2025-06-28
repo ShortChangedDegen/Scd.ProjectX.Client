@@ -4,11 +4,6 @@ using Scd.ProjectX.Client.Models.Trades;
 using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Scd.ProjectX.Client.Tests.Rest
 {
@@ -17,7 +12,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         private ITradesApi _tradesApi;
         private ITradesFacade _tradesFacade;
 
-        public TradesFacadeTests() 
+        public TradesFacadeTests()
         {
             _tradesApi = A.Fake<ITradesApi>();
             _tradesFacade = new TradesFacade(_tradesApi);
@@ -34,8 +29,8 @@ namespace Scd.ProjectX.Client.Tests.Rest
         [Fact]
         public async Task GetTrades_ShouldThrowArgumentException_WhenSearchRequestAccountIdIsDefault()
         {
-            SearchRequest? searchRequest = new SearchRequest 
-            { 
+            SearchRequest? searchRequest = new SearchRequest
+            {
                 AccountId = default,
                 StartTimestamp = DateTime.Now.AddDays(-1),
             };

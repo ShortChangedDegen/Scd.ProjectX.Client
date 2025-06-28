@@ -91,13 +91,13 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
         /// </summary>
         /// <param name="unsubscribeMethod">The hub method to unsubscribe from events during cleanup.</param>
         /// <exception cref="ProjectXClientException"></exception>
-        public async virtual Task Unsubscribe() 
-        { 
-            try 
+        public virtual async Task Unsubscribe()
+        {
+            try
             {
                 await hubConnection.InvokeAsync<TEvent>(UnsubscribeMethodName);
-            } 
-            catch (Exception ex) 
+            }
+            catch (Exception ex)
             {
                 throw new ProjectXClientException($"Failed to unsubscribe from {UnsubscribeMethodName}.", ex);
             }
@@ -129,6 +129,6 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
                 // This is shared. Just set locaL reference to null.
                 isDisposed = true;
             }
-        }        
+        }
     }
 }

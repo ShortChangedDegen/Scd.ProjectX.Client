@@ -1,7 +1,7 @@
 ﻿namespace Scd.ProjectX.Client.Utility
 {
     /// <summary>
-    /// The Refit AuthTokenHandler interface is used to 
+    /// The Refit AuthTokenHandler interface is used to
     /// retrieve an authentication token.
     /// </summary>
     public interface IAuthTokenHandler

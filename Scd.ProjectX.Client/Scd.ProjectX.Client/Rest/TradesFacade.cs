@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Scd.ProjectX.Client.Models.Account;
-using Scd.ProjectX.Client.Models.Trades;
+﻿using Scd.ProjectX.Client.Models.Trades;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
@@ -39,8 +37,6 @@ namespace Scd.ProjectX.Client.Rest
                 EndTimestamp = endTime ?? DateTime.Now
             });
 
-        
-
         /// <summary>
         /// Retrieves a list of trades based on the provided search request.
         /// </summary>
@@ -56,7 +52,7 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _tradesApi.GetTrades(searchRequest);
-                
+
                 if (!response.Success)
                 {
                     throw new HttpRequestException($"Failed to retrieve trades: {response.ErrorMessage}");
@@ -68,6 +64,5 @@ namespace Scd.ProjectX.Client.Rest
                 throw new ProjectXClientException("Error retrieving trades", ex);
             }
         }
-
     }
 }

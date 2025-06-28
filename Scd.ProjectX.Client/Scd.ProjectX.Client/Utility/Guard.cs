@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Numerics;
+﻿using System.Numerics;
 
 namespace Scd.ProjectX.Client.Utility
 {
@@ -83,7 +82,7 @@ namespace Scd.ProjectX.Client.Utility
         /// <param name="paramName">The parameter name.</param>
         /// <returns>The <paramref name="param"/> value.</returns>
         /// <exception cref="ArgumentException">The provided collection cannot be empty.</exception>
-        public static T NotNullOrEmpty<T, U>(T param, string paramName) 
+        public static T NotNullOrEmpty<T, U>(T param, string paramName)
             where T : ICollection<U>
         {
             NotNull(param, paramName);
@@ -147,7 +146,7 @@ namespace Scd.ProjectX.Client.Utility
         /// <param name="param">The parameter value.</param>
         /// <param name="paramName">The name of the parameter.</param>
         /// <returns>The paramater.</returns>
-        public static T NotIn<T>(T[] badValues, T param, string paramName) =>            
+        public static T NotIn<T>(T[] badValues, T param, string paramName) =>
             IsTrue(param => badValues.All(bv => !bv?.Equals(param) ?? false),
                 param,
                 paramName,
@@ -199,5 +198,4 @@ namespace Scd.ProjectX.Client.Utility
                     $"{paramName} cannot be less than {minValue}."
                 );
     }
-        
 }

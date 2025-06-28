@@ -2,22 +2,16 @@
 using FluentAssertions;
 using Microsoft.Extensions.Options;
 using Scd.ProjectX.Client.Messaging;
-using Scd.ProjectX.Client.Models.MarketData;
 using Scd.ProjectX.Client.Utility;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Scd.ProjectX.Client.Tests.Dispatchers
+namespace Scd.ProjectX.Client.Tests.Messaging
 {
     public class MarketEventHubTests
     {
         private IAuthTokenHandler _providedAuthTokenHandler;
         private IOptions<ProjectXSettings> _providedSettings;
 
-        public MarketEventHubTests() 
+        public MarketEventHubTests()
         {
             _providedAuthTokenHandler = A.Fake<IAuthTokenHandler>();
             _providedSettings = Options.Create(new ProjectXSettings
@@ -30,7 +24,7 @@ namespace Scd.ProjectX.Client.Tests.Dispatchers
                 UserHubUrl = "https://user.topstepx.com",
                 Username = "testuser",
             });
-        }        
+        }
 
         [Fact]
         public void MarketEventHub_ShouldThrowArgumentNullException_WhenAuthTokenHandlerIsNull()

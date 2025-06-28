@@ -5,7 +5,6 @@ using Scd.ProjectX.Client.Example.Observers;
 using Scd.ProjectX.Client.Messaging;
 using Scd.ProjectX.Client.Models.MarketData;
 using Scd.ProjectX.Client.Rest;
-using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
 namespace Scd.ProjectX.Client.Example
@@ -27,7 +26,7 @@ namespace Scd.ProjectX.Client.Example
                 {
                     services.AddSingleton<IAuthTokenHandler, AuthTokenHandler>();
                     services.Configure<ProjectXSettings>(opts => context.Configuration.GetSection(ProjectXSettings.SectionName).Bind(opts));
-                    
+
                     services.AddSingleton<IProjectXApi, ProjectXApi>();
                     services.AddSingleton<IAccountFacade, AccountFacade>();
                     services.AddSingleton<IMarketDataFacade, MarketDataFacade>();
@@ -38,7 +37,7 @@ namespace Scd.ProjectX.Client.Example
                     services.AddSingleton<IProjectXHub, ProjectXHub>();
                     services.AddSingleton<IUserEventHub, UserEventHub>();
                     services.AddSingleton<IMarketEventHub, MarketEventHub>();
-                });               
+                });
 
             var app = builder.Build();
 
@@ -95,6 +94,6 @@ namespace Scd.ProjectX.Client.Example
 
             Console.WriteLine("Press and key to exit");
             Console.ReadKey();
-        }        
+        }
     }
 }

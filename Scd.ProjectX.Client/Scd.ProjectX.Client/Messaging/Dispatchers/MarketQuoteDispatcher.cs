@@ -7,13 +7,13 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     /// <summary>
     /// Initializes a new instance of the <see cref="MarketQuoteDispatcher"/> class.
     /// </summary>
-    public class MarketQuoteDispatcher 
-        :   EventDispatcher<MarketQuoteEvent>,
+    public class MarketQuoteDispatcher
+        : EventDispatcher<MarketQuoteEvent>,
             IEventDispatcher<MarketQuoteEvent>
     {
         public MarketQuoteDispatcher(HubConnection connection)
             : base(connection, "GatewayQuote", "UnsubscribeContractQuotes")
-        {            
+        {
             hubConnection.On<string, MarketQuoteEvent>(PublishMethodName, Publish);
         }
 

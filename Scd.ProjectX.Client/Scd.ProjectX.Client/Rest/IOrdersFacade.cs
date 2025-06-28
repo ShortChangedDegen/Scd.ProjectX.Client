@@ -34,7 +34,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The account ID.</param>
         /// <returns>A collection of orders.</returns>
-        /// <exception cref="InvalidOperationException"></exception>        
+        /// <exception cref="InvalidOperationException"></exception>
         Task<List<Order>> GetOpenOrders(int accountId);
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="endTime">the latest timestamp for the search.</param>
         /// <returns>A list of order.</returns>
         Task<List<Order>> GetOrders(int accountId, DateTime startTime, DateTime? endTime);
-        
+
         /// <summary>
         /// Retrieves a list of orders.
         /// </summary>

@@ -9,7 +9,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     /// <typeparam name="TEvent"></typeparam>
     public interface IEventDispatcher<TEvent> : IObservable<TEvent>, IDisposable
         where TEvent : IEvent
-    {        
+    {
         /// <summary>
         /// Gets the name of the method used to subscribe to events
         /// from the hub.

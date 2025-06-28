@@ -5,7 +5,6 @@ using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
-using System.Runtime.CompilerServices;
 
 namespace Scd.ProjectX.Client.Tests.Rest
 {
@@ -68,7 +67,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             var startTime = DateTime.UtcNow.AddDays(-1);
             var endTime = DateTime.UtcNow;
 
-            var providedOrders = new List<Order> 
+            var providedOrders = new List<Order>
             {
                 new Order
                 {
@@ -105,7 +104,6 @@ namespace Scd.ProjectX.Client.Tests.Rest
 
             var results = await _ordersFacade.GetOrders(accountId, startTime, endTime);
             results.Should().BeEquivalentTo(providedOrders);
-
         }
 
         [Fact]
@@ -162,7 +160,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 .Throws(new Exception("TestException"));
 
             var ordersFacade = new OrdersFacade(_ordersApi);
-            
+
             var actualException = await Assert.ThrowsAsync<ProjectXClientException>(() => _ordersFacade.GetOpenOrders(accountId));
             actualException.Message.Should().Contain("open orders");
         }
@@ -353,7 +351,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         }
 
         [Fact]
-        public async Task CancelOrdeShouldr_ShouldThrowArgumentNullException_WhenProvidedRequestIsNull() 
+        public async Task CancelOrdeShouldr_ShouldThrowArgumentNullException_WhenProvidedRequestIsNull()
         {
             CancelOrderRequest providedRequest = null;
 
@@ -424,7 +422,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 Size = 10,
                 LimitPrice = 100.50m,
                 StopPrice = 99.00m
-            };            
+            };
 
             var actualException = await Assert.ThrowsAsync<ArgumentException>(() => _ordersFacade.UpdateOrder(providedRequest));
             actualException.Message.Should().Contain("OrderId");

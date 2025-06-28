@@ -95,7 +95,7 @@ namespace Scd.ProjectX.Client.Messaging
         public virtual async Task Subscribe(params IObserver<UserAccountEvent>[] observers)
         {
             subscribers.AddRange(observers.Select(UserAccountHub.Subscribe));
-            await hubConnection.InvokeAsync("SubscribeAccounts");            
+            await hubConnection.InvokeAsync("SubscribeAccounts");
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Scd.ProjectX.Client.Messaging
                     userPositionHub?.Dispose();
 
                     userTradeHub?.Unsubscribe();
-                    userTradeHub?.Dispose();                    
+                    userTradeHub?.Dispose();
                 }
                 isDisposed = true;
             }

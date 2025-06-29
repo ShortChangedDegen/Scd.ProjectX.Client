@@ -121,8 +121,8 @@ easier to get started developing with the ProjectX API and doing the interesting
 
 - Do you work for ProjectX?
 
-Nope. I am just an independent programmer who trades futures as a hobby at this point. I am still spending money. I always wanted a project like this, though.
+Nope. I am just an independent programmer who follows the markets as a hobby.
 
-- Is ShortChangeDegen a degenerate gambler or something who ia always loses money?
+- Is ShortChangeDegen a degenerate gambler or something who is always losing money?
 
-No. It was the first thing I could think of when joining a discord for the first time. It was just tongue and cheek.
+No. It was the first thing I could think of when joining a discord for the first time. It was mostly tongue and cheek. We've all been there.

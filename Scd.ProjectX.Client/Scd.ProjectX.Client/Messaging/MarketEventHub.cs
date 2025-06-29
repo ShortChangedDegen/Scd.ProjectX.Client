@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Scd.ProjectX.Client.Messaging.Dispatchers;
 using Scd.ProjectX.Client.Models;
@@ -113,6 +114,7 @@ namespace Scd.ProjectX.Client.Messaging
         {
             var subscriberTasks = new List<Task>();
 
+            dispatcher.Init();
             subscribers.AddRange(observers.Select(dispatcher.Subscribe));
 
             foreach (var id in contractIds)

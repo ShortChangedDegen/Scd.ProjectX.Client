@@ -45,7 +45,9 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _accountApi.SearchAccounts(Guard.NotNull(request, nameof(request)));
-                return response.Success ? response.Accounts ?? [] : [];
+                return response.Success ? response.Accounts 
+                    ?? []
+                    : [];
             }
             catch (Exception ex)
             {

@@ -109,11 +109,9 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _positionsApi.SearchOpenPositions(accountId);
-                if (response.Success)
-                {
-                    return response.Positions ?? new List<Position>();
-                }
-                throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}");
+                return response.Success
+                    ? response.Positions ?? new List<Position>()
+                    : [];
             }
             catch (Exception ex)
             {

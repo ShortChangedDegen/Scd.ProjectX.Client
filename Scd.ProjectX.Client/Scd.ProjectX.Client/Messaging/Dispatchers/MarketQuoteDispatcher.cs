@@ -13,9 +13,11 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
     {
         public MarketQuoteDispatcher(HubConnection connection)
             : base(connection, "GatewayQuote", "UnsubscribeContractQuotes")
-        {
-            hubConnection.On<string, MarketQuoteEvent>(PublishMethodName, Publish);
+        {            
         }
+
+        public override void Init() =>
+            hubConnection.On<string, MarketQuoteEvent>(PublishMethodName, Publish);
 
         /// <summary>
         /// Publishes an event to all observers and stores it in the event list.

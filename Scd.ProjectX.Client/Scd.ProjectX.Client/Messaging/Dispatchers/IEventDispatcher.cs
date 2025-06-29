@@ -23,6 +23,11 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
         void Publish(TEvent @event);
 
         /// <summary>
+        /// Initializes the dispatcher's subscription.
+        /// </summary>
+        void Init();
+
+        /// <summary>
         /// Subscribes an observer to the event hub.
         /// </summary>
         /// <param name="observer">The <see cref="IObserver{TEvent}"/>.</param>

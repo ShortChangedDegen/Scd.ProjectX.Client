@@ -64,8 +64,8 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _tradesApi.GetTrades(searchRequest))
                 .Returns(new SearchResponse { Success = false, ErrorMessage = "Failed to retrieve trades" });
 
-            var actualException = await Assert.ThrowsAsync<ProjectXClientException>(() => _tradesFacade.GetTrades(searchRequest));
-            actualException.InnerException?.Message.Should().Contain("Failed to retrieve trades");
+            var results = await _tradesFacade.GetTrades(searchRequest);
+            results.Should().BeEmpty();
         }
 
         [Fact]

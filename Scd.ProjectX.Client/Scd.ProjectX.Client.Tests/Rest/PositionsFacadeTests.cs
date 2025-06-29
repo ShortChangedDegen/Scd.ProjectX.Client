@@ -154,12 +154,12 @@ namespace Scd.ProjectX.Client.Tests.Rest
         }
 
         [Fact]
-        public async Task SearchOpenPositions_ShouldThrowProjectXClientException_WhenResponseNotSuccessful()
+        public async Task SearchOpenPositions_ShouldReturnEmptyCollections_WhenResponseNotSuccessful()
         {
             int accountId = 123456;
 
-            var actualException = await Assert.ThrowsAsync<ProjectXClientException>(() => _positionsFacade.SearchOpenPositions(accountId));
-            actualException.Message.Should().Contain("Error searching open positions");
+            var response = await _positionsFacade.SearchOpenPositions(accountId);
+            response.Should().BeEmpty();
         }
 
         [Fact]

@@ -1,6 +1,7 @@
 ﻿using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
+using System.Net;
 
 namespace Scd.ProjectX.Client.Rest
 {
@@ -54,7 +55,9 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _ordersApi.GetOrders(request);
-                return response.Success ? response.Orders ?? [] : []; //  TODO: Add Logging.
+                return response.Success
+                    ? response.Orders ?? []
+                    : [];
             }
             catch (Exception ex)
             {
@@ -73,7 +76,9 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _ordersApi.GetOpenOrders(accountId);
-                return response.Success ? response.Orders ?? [] : [];//  TODO: Add Logging.
+                return response.Success
+                    ? response.Orders ?? []
+                    : [];
             }
             catch (Exception ex)
             {
@@ -99,10 +104,8 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _ordersApi.CreateOrder(request);
                 if (!response.Success)
                 {
-                    throw new HttpRequestException($"Failed to create trades: {response.ErrorMessage}");
+                    throw new ProjectXClientException($"Failed to create trades: {response.ErrorMessage}");
                 }
-                // Need logging/ Woohoo magic numbers (logging)
-                // Need to do better than just returning null.
             }
             catch (Exception ex)
             {
@@ -139,7 +142,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _ordersApi.CancelOrder(request);
                 if (!response.Success)
                 {
-                    throw new ProjectXClientException($"Failed to cancel order: {response.ErrorMessage}");
+                    throw new ProjectXClientException($"Failed to update order: {response.ErrorMessage}"); ;
                 }
             }
             catch (Exception ex)
@@ -176,7 +179,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _ordersApi.UpdateOrder(request);
                 if (!response.Success)
                 {
-                    throw new ProjectXClientException($"Failed to update order: {response.ErrorMessage}");
+                    throw new HttpRequestException($"Failed to update order: {response.ErrorMessage}");                    
                 }
             }
             catch (Exception ex)

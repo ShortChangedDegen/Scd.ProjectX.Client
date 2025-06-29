@@ -52,12 +52,9 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _tradesApi.GetTrades(searchRequest);
-
-                if (!response.Success)
-                {
-                    throw new HttpRequestException($"Failed to retrieve trades: {response.ErrorMessage}");
-                }
-                return response.Trades ?? [];
+                return response.Success 
+                    ? response.Trades ?? []
+                    : [];
             }
             catch (Exception ex)
             {

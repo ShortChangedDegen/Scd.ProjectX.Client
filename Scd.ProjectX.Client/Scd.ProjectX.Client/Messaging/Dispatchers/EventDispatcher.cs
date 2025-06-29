@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Scd.ProjectX.Client.Models;
 using Scd.ProjectX.Client.Utility;
+using System.Security.Cryptography;
 
 namespace Scd.ProjectX.Client.Messaging.Dispatchers
 {
@@ -30,8 +31,13 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
             hubConnection = Guard.NotNull(connection, nameof(connection));
             PublishMethodName = Guard.NotNullOrEmpty(publishMethodName, nameof(publishMethodName));
             UnsubscribeMethodName = Guard.NotNullOrEmpty(unsubscribeMethodName, nameof(unsubscribeMethodName));
-            hubConnection.On<TEvent>(PublishMethodName, Publish);
         }
+
+        /// <summary>
+        /// Initializes the dispatcher's subscription.
+        /// </summary>
+        public virtual void Init() =>
+            hubConnection.On<TEvent>(PublishMethodName, Publish);
 
         /// <summary>
         /// Gets the name of the method used to subscribe to events

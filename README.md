@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+﻿# ShortChangeDegen's ProjectX API Client
+=======
 # ShortChangedDegen's ProjectX API Client
+>>>>>>> 67345efc58a075ffd0e86c841e00b731b2ab9ac4
 Provides common boilerplate functionality for communicating with the [ProjectX REST API and event hubs.](https://gateway.docs.projectx.com/docs/intro)
 
 ---
@@ -119,10 +123,7 @@ easier to get started developing with the ProjectX API and doing the interesting
 
 [You can buy me a coffee if you're feeling generous](https://buymeacoffee.com/shortchangeddegen)
 
-- Do you work for ProjectX?
+- Is ShortChangeDegen a degenerate gambler or something who always loses money?
 
-Nope. I am just an independent programmer who follows the markets as a hobby.
+¯\_(ツ)_/¯ It was the first thing I could think of when joining a discord for the first time. It was mostly tongue and cheek. We've all been there.
 
-- Is ShortChangeDegen a degenerate gambler or something who is always losing money?
-
-No. It was the first thing I could think of when joining a discord for the first time. It was mostly tongue and cheek. We've all been there.

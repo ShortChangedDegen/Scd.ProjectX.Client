@@ -41,9 +41,18 @@ namespace Scd.ProjectX.Client.Messaging
             settings = Guard.NotNull(projectXSettings?.Value, nameof(projectXSettings));
             _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));
             var getTokenTask = _authTokenHandler.GetToken();
-            if (!getTokenTask.IsCompleted)
+            try
             {
-                getTokenTask.RunSynchronously();
+                if (getTokenTask.Status != TaskStatus.Running
+                    && getTokenTask.Status != TaskStatus.WaitingForActivation
+                    && getTokenTask.Status != TaskStatus.RanToCompletion)
+                {
+                    getTokenTask.RunSynchronously();
+                }
+            }
+            catch (InvalidOperationException oEx)
+            {
+                // Log and ignore RunSynchronously already.
             }
             hubConnection = new HubConnectionBuilder()
                 .WithAutomaticReconnect()
@@ -93,7 +102,7 @@ namespace Scd.ProjectX.Client.Messaging
         /// <param name="accountIds">One or more account IDs to listen for.</param>
         /// <param name="observers">One or more observers.</param>
         public virtual async Task Subscribe(params IObserver<UserAccountEvent>[] observers)
-        {
+        {            
             subscribers.AddRange(observers.Select(UserAccountHub.Subscribe));
             await hubConnection.InvokeAsync("SubscribeAccounts");
         }
@@ -127,6 +136,7 @@ namespace Scd.ProjectX.Client.Messaging
         {
             var subscriberTasks = new List<Task>();
 
+            dispatcher.Init();
             subscribers.AddRange(observers.Select(dispatcher.Subscribe));
 
             foreach (var id in accountIds)

@@ -23,8 +23,13 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
             hubConnection = Guard.NotNull(connection, nameof(connection));
             PublishMethodName = Guard.NotNullOrEmpty(publishMethodName, nameof(publishMethodName));
             unsubscribeMethod = Guard.NotNullOrEmpty(unsubscribeMethod, nameof(unsubscribeMethod));
-            hubConnection.On<TId, T>(PublishMethodName, Publish);
         }
+
+        /// <summary>
+        /// Initializes the dispatcher's subscription.
+        /// </summary>
+        public virtual void Init() =>
+            hubConnection.On<TId, T>(PublishMethodName, this.Publish);
 
         /// <summary>
         /// Publishes an event to all observers and stores it in the event list.

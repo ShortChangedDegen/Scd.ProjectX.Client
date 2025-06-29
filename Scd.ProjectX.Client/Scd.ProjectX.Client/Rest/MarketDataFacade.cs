@@ -65,11 +65,13 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _marketDataApi.GetBars(request);
-                return response.Success ? response.Bars : [];
+                return response.Success 
+                    ? response.Bars 
+                    : [];
             }
             catch (Exception ex)
             {
-                throw new ProjectXClientException("Error getting candle data", ex);
+                throw new ProjectXClientException("Error getting candle data", ex, System.Net.HttpStatusCode.InternalServerError);
             }
         }
 
@@ -101,11 +103,13 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _marketDataApi.GetContracts(request);
-                return response.Success ? response.Contracts : [];
+                return response.Success
+                    ? response.Contracts
+                    : [];
             }
             catch (Exception ex)
             {
-                throw new ProjectXClientException("Error getting contracts", ex);
+                throw new ProjectXClientException("Error getting contracts", ex, System.Net.HttpStatusCode.InternalServerError);
             }
         }
     }

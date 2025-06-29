@@ -54,7 +54,7 @@ namespace Scd.ProjectX.Client
         /// Authenticates with the API and cache the token.
         /// </summary>
         /// <returns>A JWT.</returns>
-        public virtual async Task<string> Authenticate() => await _authTokenHandler.GetToken();
+        public virtual async Task<string> Authenticate() => await _authTokenHandler.GetToken() ?? string.Empty;
 
         /// <summary>
         /// Disposes of the API resources.

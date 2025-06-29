@@ -119,7 +119,7 @@ public class MarketDepthObserver : IObserver<MarketDepthEvent>
 I decided to share some comomn functionality that needs to be implemented by everyone. Hopefully, it makes it
 easier to get started developing with the ProjectX API and doing the interesting things you want to do.
 
-[You can buy me a coffee if you're feeling generous](https://www.buymeacoffee.com/shortchangedegen)
+[You can buy me a coffee if you're feeling generous](https://buymeacoffee.com/shortchangeddegen)
 
 - Do you work for ProjectX?
 

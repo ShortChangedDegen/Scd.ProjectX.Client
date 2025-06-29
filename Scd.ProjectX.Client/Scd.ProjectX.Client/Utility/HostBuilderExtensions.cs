@@ -15,6 +15,7 @@ namespace Scd.ProjectX.Client.Utility
                 services.Configure<ProjectXSettings>(opts => context.Configuration.GetSection(ProjectXSettings.SectionName).Bind(opts));
 
                 // Register the ProjectX API and its facades
+
                 services.AddSingleton<IAuthTokenHandler, AuthTokenHandler>();
                 services.AddSingleton<IAccountFacade, AccountFacade>();
                 services.AddSingleton<IMarketDataFacade, MarketDataFacade>();

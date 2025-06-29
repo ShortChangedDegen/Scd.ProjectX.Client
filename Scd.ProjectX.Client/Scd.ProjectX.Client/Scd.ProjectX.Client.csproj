@@ -1,21 +1,54 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>0.1.0.0</Version>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Authors>ShortChangedDegen</Authors>
+    <Company>ShortChangedDegen</Company>
+    <Product>ProjectX Client</Product>
+    <Description>A client for accessing the ProjectX REST API and Events</Description>
+    <Copyright>Copyright (c) 2025, ShortChangedDegen</Copyright>
+    <PackageProjectUrl>https://github.com/ShortChangedDegen/Scd.ProjectX.Client</PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <RepositoryUrl>https://github.com/ShortChangedDegen/Scd.ProjectX.Client</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>ProjectX Trading Futures Topstep </PackageTags>
+    <PackageReleaseNotes>Inintial Release</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+    <Title>Project X Client</Title>
   </PropertyGroup>
 
 
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.6" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Refit" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <InternalsVisibleTo Include="Scd.ProjectX.Client.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\LICENSE" Link="LICENSE">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\..\README.md" Link="README.md">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>

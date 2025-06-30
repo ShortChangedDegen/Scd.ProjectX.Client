@@ -133,7 +133,7 @@ I haven't looked into using [Python.NET](https://pythonnet.github.io/). Obviousl
 for everything (or everyone(anyone?)) but if its a good fit, it could be a way to get started with the 
 ProjectX API in Python.
 
-Python developers can also check out the [ProjectX Gateway API SDK for Python (Unofficial)](https://github.com/ChristianJStarr/projectx-sdk-python) repo.
+*Python developers should probably check out the [ProjectX Gateway API SDK for Python (Unofficial)](https://github.com/ChristianJStarr/projectx-sdk-python) repo.*
 
 - Is ShortChangedDegen a degenerate gambler or something who always loses money?
 

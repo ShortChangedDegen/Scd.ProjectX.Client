@@ -10,7 +10,7 @@
         /// Retrieves an authentication token from the TopstepX API.
         /// </summary>
         /// <returns>A token when successful; otherwise, null.</returns>
-        /// <exception cref="HttpRequestException">Thrown when an API request fails.</exception>
+        /// <exception cref="ProjectXClientException">Thrown when an API request fails.</exception>
         Task<string?> GetToken();
     }
 }

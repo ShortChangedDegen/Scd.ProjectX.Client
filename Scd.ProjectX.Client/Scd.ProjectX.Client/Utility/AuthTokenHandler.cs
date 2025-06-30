@@ -71,7 +71,7 @@ namespace Scd.ProjectX.Client.Utility
                 {
                     _token = string.Empty;
                     // Hide normal implementation details about our inner dependency.
-                    throw new HttpRequestException($"Authentication failed: {refitEx.Message}", refitEx);
+                    throw new ProjectXClientException($"Authentication failed: {refitEx.Message}", refitEx);
                 }
             }
 
@@ -98,7 +98,7 @@ namespace Scd.ProjectX.Client.Utility
                 return;
             }
 
-            throw new HttpRequestException($"Authentication failed: {response.ErrorMessage}");
+            throw new ProjectXClientException($"Authentication failed: {response.ErrorMessage}");
         }
 
         private async Task RefreshToken()

@@ -13,19 +13,19 @@ This library provides a simple way to access the ProjectX REST API and real-time
 REST calls are made using the `ProjectXApi` class. This class provides methods for accessing the various endpoints of the ProjectX API. The API is organized by endpoint, so you can access accounts, contracts, orders, trades, and more through the corresponding properties of the `ProjectXApi` class.
 
 ### Events and Observers
-Messaging uses the Observer pattern to allow for an easy way to subscribe to events.  See more from [MSDN on the Observer Pattern](https://learn.microsoft.com/en-us/dotnet/standard/events/observer-design-pattern#when-to-apply-the-pattern). To receive events, you need to implement IObserver\<T> for the type of event you want to subscribe to. It can then be registered:
+Messaging uses the Observer pattern to allow for an easy way to subscribe to events.  See more from [MSDN on the Observer Pattern](https://learn.microsoft.com/en-us/dotnet/standard/events/observer-design-pattern#when-to-apply-the-pattern). To receive events, you need to implement `IObserver<T>` for the type of event you want to subscribe to. It can then be registered:
 ```
 await projectXHub.Subscribe(contractIds, new MarketDepthObserver());
 ```
 
 The types of events listed below. Definitions should mirror the [ProjectX API Documentation](https://gateway.docs.projectx.com/docs/intro).
-- MarketDepthEvent
-- MarketQuoteEvent
-- MarketTradeEvent
-- UserAccountEvent
-- UserOrderEvent
-- UserTradeEvent
-- UserPositionEvent
+- `MarketDepthEvent`
+- `MarketQuoteEvent`
+- `MarketTradeEvent`
+- `UserAccountEvent`
+- `UserOrderEvent`
+- `UserTradeEvent`
+- `UserPositionEvent`
 
 ## Basic Usage
 Add a section to the appsettings.json file for `ProjectXClient`:
@@ -52,7 +52,7 @@ Adding `.AddProjectXClientServices` to your HostBuilder will add all the necessa
 
 It isn't necessary to use this extension method if you're not worried about `ProjectXApi` and `ProjectXHub`.
 
-All registered services are located using the interface they implement, so ProjectXApi is located using something like `app.Services.GetService<IProjectXApi>()`.
+All registered services are located using the interface they implement, so `ProjectXApi` is located using something like `app.Services.GetService<IProjectXApi>()`.
 
 ```
 var app = Host.CreateDefaultBuilder(args)
@@ -132,6 +132,8 @@ I do not have any professional relationship with ProjectX.
 I haven't looked into using [Python.NET](https://pythonnet.github.io/). Obviously this isn't the answer 
 for everything (or everyone(anyone?)) but if its a good fit, it could be a way to get started with the 
 ProjectX API in Python.
+
+Python developers can also check out the [ProjectX Gateway API SDK for Python (Unofficial)](https://github.com/ChristianJStarr/projectx-sdk-python) repo.
 
 - Is ShortChangedDegen a degenerate gambler or something who always loses money?
 

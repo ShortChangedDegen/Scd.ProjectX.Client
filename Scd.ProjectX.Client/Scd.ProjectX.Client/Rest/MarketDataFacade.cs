@@ -71,7 +71,7 @@ namespace Scd.ProjectX.Client.Rest
             }
             catch (Exception ex)
             {
-                throw new ProjectXClientException("Error getting candle data", ex, System.Net.HttpStatusCode.InternalServerError);
+                throw new ProjectXClientException("Error getting candle data", ex);
             }
         }
 
@@ -109,7 +109,7 @@ namespace Scd.ProjectX.Client.Rest
             }
             catch (Exception ex)
             {
-                throw new ProjectXClientException("Error getting contracts", ex, System.Net.HttpStatusCode.InternalServerError);
+                throw new ProjectXClientException("Error getting contracts", ex);
             }
         }
     }

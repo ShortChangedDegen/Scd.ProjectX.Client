@@ -2,6 +2,8 @@
 {
     public class ProjectXClientException : HttpRequestException
     {
+        private int _statusCode;
+
         public ProjectXClientException()
         {
         }
@@ -16,14 +18,10 @@
         {
         }
 
-        public ProjectXClientException(string message, Exception inner, System.Net.HttpStatusCode httpStatusCode)
-            : base(message, inner, httpStatusCode)
+        public ProjectXClientException(string message, Exception inner, int statusCode)
+            : this(message, inner)
         {
-        }
-
-        public ProjectXClientException(HttpRequestError httpRequestError, string message, Exception inner, System.Net.HttpStatusCode httpStatusCode)
-            : base(httpRequestError, message, inner, httpStatusCode)
-        {
+            _statusCode = statusCode;
         }
     }
 }

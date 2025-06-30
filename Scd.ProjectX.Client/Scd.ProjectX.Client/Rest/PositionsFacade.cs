@@ -48,8 +48,8 @@ namespace Scd.ProjectX.Client.Rest
             {
                 var response = await _positionsApi.CloseContract(request);
                 if (!response.Success)
-                {
-                    throw new HttpRequestException($"Failed to close contract: {response.ErrorMessage}");
+                {                    
+                    throw new ProjectXClientException($"Failed to close contract: {response.ErrorMessage}", null, response.ErrorCode);
                 }
             }
             catch (Exception ex)
@@ -88,7 +88,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _positionsApi.PartiallyCloseContract(request);
                 if (!response.Success)
                 {
-                    throw new HttpRequestException($"Failed to partially close contract: {response.ErrorMessage}");
+                    throw new ProjectXClientException($"Failed to partially close contract: {response.ErrorMessage}", null, response.ErrorCode);
                 }
             }
             catch (Exception ex)

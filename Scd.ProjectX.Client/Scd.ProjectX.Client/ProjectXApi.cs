@@ -77,11 +77,6 @@ namespace Scd.ProjectX.Client
             options.Value.ApiUrl,
             new RefitSettings
             {
-                ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = true,
-                }),
                 AuthorizationHeaderValueGetter = async (request, cancellationToken) => await Authenticate()
             });
     }

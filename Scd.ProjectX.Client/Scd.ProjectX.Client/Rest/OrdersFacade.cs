@@ -104,7 +104,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _ordersApi.CreateOrder(request);
                 if (!response.Success)
                 {
-                    throw new ProjectXClientException($"Failed to create trades: {response.ErrorMessage}");
+                    throw new ProjectXClientException($"Failed to create trades: {response.ErrorMessage}", null, response.ErrorCode);
                 }
             }
             catch (Exception ex)
@@ -142,7 +142,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _ordersApi.CancelOrder(request);
                 if (!response.Success)
                 {
-                    throw new ProjectXClientException($"Failed to update order: {response.ErrorMessage}"); ;
+                    throw new ProjectXClientException($"Failed to update order: {response.ErrorMessage}", null, response.ErrorCode);
                 }
             }
             catch (Exception ex)
@@ -179,7 +179,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _ordersApi.UpdateOrder(request);
                 if (!response.Success)
                 {
-                    throw new HttpRequestException($"Failed to update order: {response.ErrorMessage}");                    
+                    throw new ProjectXClientException($"Failed to update order: {response.ErrorMessage}", null, response.ErrorCode);                  
                 }
             }
             catch (Exception ex)

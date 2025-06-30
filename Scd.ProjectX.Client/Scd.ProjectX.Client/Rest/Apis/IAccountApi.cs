@@ -7,13 +7,13 @@ namespace Scd.ProjectX.Client.Rest.Apis
     {
         [Headers("Accept: text/plain", "Content-Type: application/json",
             "Authorization: Bearer")]
-        [Post("/api/Account/search")] // Get or post
+        [Post("/api/Account/search")]
         Task<AccountSearchResponse> SearchAccounts(AccountSearchRequest request);
 
-        [Post("/api/Auth/loginKey")] // Post
+        [Post("/api/Auth/loginKey")]
         Task<AuthenticationResponse> Authenticate(AuthenticationRequest request);
 
-        [Post("/api/Auth/validate")] // Post
+        [Post("/api/Auth/validate")]
         Task<RefreshTokenResponse> RefreshToken();
     }
 }

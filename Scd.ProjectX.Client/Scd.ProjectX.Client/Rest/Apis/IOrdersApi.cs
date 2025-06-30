@@ -7,19 +7,19 @@ namespace Scd.ProjectX.Client.Rest.Apis
     [Headers("Authorization: Bearer")]
     public interface IOrdersApi
     {
-        [Post("/api/Order/search")] // Get/Post depending on query complexity
+        [Post("/api/Order/search")]
         Task<SearchResponse> GetOrders(SearchRequest request);
 
-        [Post("/api/Order/searchOpen")] // Get
+        [Post("/api/Order/searchOpen")]
         Task<SearchResponse> GetOpenOrders(int accountId);
 
-        [Post("/api/Order/place")] // Post
+        [Post("/api/Order/place")]
         Task<CreateResponse> CreateOrder(CreateOrderRequest request);
 
-        [Post("/api/Order/cancel")] //Delete
+        [Post("/api/Order/cancel")]
         Task<DefaultResponse> CancelOrder(CancelOrderRequest request);
 
-        [Post("/api/Order/modify")] // Put
+        [Post("/api/Order/modify")]
         Task<DefaultResponse> UpdateOrder(ModifyRequest request);
     }
 }

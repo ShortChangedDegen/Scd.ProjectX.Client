@@ -2,7 +2,6 @@
 using Refit;
 using Scd.ProjectX.Client.Models.Account;
 using Scd.ProjectX.Client.Rest.Apis;
-using System.Text.Json;
 using System.Timers;
 
 namespace Scd.ProjectX.Client.Utility
@@ -18,7 +17,7 @@ namespace Scd.ProjectX.Client.Utility
     {
         // Flag to indicate if the token should be refreshed
 
-        private bool refreshToken = false;
+        private bool _refreshToken = false;
 
         private string? _token = null;
 
@@ -53,7 +52,7 @@ namespace Scd.ProjectX.Client.Utility
         /// <exception cref="HttpRequestException">Thrown when an API request fails.</exception>
         public async Task<string?> GetToken()
         {
-            if (refreshToken && !string.IsNullOrEmpty(_token))
+            if (_refreshToken && !string.IsNullOrEmpty(_token))
             {
                 // If the token is expired, reset it and stop the timer
                 await RefreshToken();
@@ -83,15 +82,7 @@ namespace Scd.ProjectX.Client.Utility
         {
             // Unable to use the common method since all other endpoints will
             // require authentication or a token.
-            var accountApi = RestService.For<IAccountApi>(options.Value.ApiUrl, new RefitSettings
-            {
-                ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = false
-                }),
-            });
-
+            var accountApi = RestService.For<IAccountApi>(options.Value.ApiUrl);
             var response = await accountApi.Authenticate(new AuthenticationRequest
             {
                 UserName = options.Value.Username,
@@ -101,7 +92,7 @@ namespace Scd.ProjectX.Client.Utility
             if (response.Success)
             {
                 _token = response.Token;
-                refreshToken = false;
+                _refreshToken = false;
                 _timer.Elapsed += OnTimerElapsed;
                 _timer.Start();
                 return;
@@ -112,21 +103,14 @@ namespace Scd.ProjectX.Client.Utility
 
         private async Task RefreshToken()
         {
-            var accountApi = RestService.For<IAccountApi>(options.Value.ApiUrl, new RefitSettings
-            {
-                ContentSerializer = new SystemTextJsonContentSerializer(new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-                    WriteIndented = false
-                }),
-            });
+            var accountApi = RestService.For<IAccountApi>(options.Value.ApiUrl);
 
             var response = await accountApi.RefreshToken();
 
             if (response.Success)
             {
                 _token = response.NewToken;
-                refreshToken = false;
+                _refreshToken = false;
                 _timer.Start();
             }
             else
@@ -138,10 +122,7 @@ namespace Scd.ProjectX.Client.Utility
 
         private void OnTimerElapsed(object? sender, ElapsedEventArgs e)
         {
-            // Use the Validate endpoint to get a new token by marking a request
-            // to the Auth/Refresh endpoint.
-
-            refreshToken = true; // Invalidate the token after expiration
+            _refreshToken = true; // Invalidate the token after expiration
             _timer.Stop(); // Stop the timer until the next request
         }
     }

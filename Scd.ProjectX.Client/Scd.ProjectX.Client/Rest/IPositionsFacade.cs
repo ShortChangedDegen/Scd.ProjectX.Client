@@ -33,7 +33,6 @@ namespace Scd.ProjectX.Client.Rest
         /// Partially closes a contract for a specific account using the specified size.
         /// </summary>
         /// <param name="request"> The request object containing the size to close.</param>
-
         Task PartiallyCloseContract(PartialCloseRequest request);
 
         /// <summary>

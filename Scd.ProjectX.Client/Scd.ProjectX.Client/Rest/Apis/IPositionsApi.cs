@@ -7,13 +7,13 @@ namespace Scd.ProjectX.Client.Rest.Apis
     [Headers("Authorization: Bearer")]
     public interface IPositionsApi
     {
-        [Post("/api/Position/closeContract")] //Put
+        [Post("/api/Position/closeContract")]
         Task<DefaultResponse> CloseContract(CloseRequest request);
 
-        [Post("/api/Position/partialCloseContract")] // Put
+        [Post("/api/Position/partialCloseContract")]
         Task<DefaultResponse> PartiallyCloseContract(PartialCloseRequest request);
 
-        [Post("/api/Position/searchOpen")] // Get
+        [Post("/api/Position/searchOpen")]
         Task<SearchResponse> SearchOpenPositions(int accountId);
     }
 }

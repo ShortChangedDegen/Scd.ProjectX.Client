@@ -9,7 +9,7 @@ namespace Scd.ProjectX.Client.Rest.Apis
         "Authorization: Bearer")]
     public interface ITradesApi
     {
-        [Post("api/Trade/search")] // Get
+        [Post("api/Trade/search")]
         Task<SearchResponse> GetTrades(SearchRequest request);
     }
 }

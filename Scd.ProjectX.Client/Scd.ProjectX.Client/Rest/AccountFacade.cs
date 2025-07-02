@@ -45,9 +45,9 @@ namespace Scd.ProjectX.Client.Rest
             try
             {
                 var response = await _accountApi.SearchAccounts(Guard.NotNull(request, nameof(request)));
-                return response.Success ? response.Accounts 
-                    ?? []
-                    : [];
+                return response.Success ? 
+                    response.Accounts ?? []
+                    : throw new ProjectXClientException($"Error getting user accounts: {response.ErrorMessage}", response.ErrorCode);
             }
             catch (Exception ex)
             {
@@ -62,12 +62,14 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="apiKey">The API key for the API authentication.</param>
         /// <returns>A JWT token.</returns>
         /// <exception cref="InvalidOperationException"></exception>
-        public async Task<string> Authenticate(string username, string apiKey) =>
-            await Authenticate(new AuthenticationRequest
+        public async Task<string> Authenticate(string username, string apiKey)
+        {
+            return await Authenticate(new AuthenticationRequest
             {
                 UserName = Guard.NotNullOrEmpty(username, nameof(username)),
                 ApiKey = Guard.NotNullOrEmpty(apiKey, nameof(apiKey)),
             });
+        }
 
         /// <summary>
         /// Authenticates the user account with the provided username and API key.

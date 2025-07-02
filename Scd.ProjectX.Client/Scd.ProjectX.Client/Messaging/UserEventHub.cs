@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-
 using Microsoft.Extensions.Options;
 using Scd.ProjectX.Client.Messaging.Dispatchers;
 using Scd.ProjectX.Client.Models;

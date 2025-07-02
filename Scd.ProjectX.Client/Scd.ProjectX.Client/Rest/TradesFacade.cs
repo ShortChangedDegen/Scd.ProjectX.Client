@@ -54,7 +54,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _tradesApi.GetTrades(searchRequest);
                 return response.Success 
                     ? response.Trades ?? []
-                    : [];
+                    : throw new ProjectXClientException($"Error searching trades: {response.ErrorMessage}", response.ErrorCode);
             }
             catch (Exception ex)
             {

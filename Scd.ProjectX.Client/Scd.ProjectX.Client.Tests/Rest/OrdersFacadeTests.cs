@@ -107,7 +107,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         }
 
         [Fact]
-        public async Task GetOrders_ShouldReturnEmptyOrdersCollection_WhenRequestIsNotSuccessful()
+        public async Task GetOrders_ShouldThrowProjectXClientException_WhenRequestIsNotSuccessful()
         {
             var accountId = 12345;
             var startTime = DateTime.UtcNow.AddDays(-1);
@@ -145,11 +145,8 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 }
             };
 
-            A.CallTo(() => _ordersApi.GetOrders(A<SearchRequest>._))
-                .Returns(new SearchResponse { Orders = providedOrders, Success = false });
-
-            var results = await _ordersFacade.GetOrders(accountId, startTime, endTime);
-            results.Should().BeEmpty();
+            A.CallTo(() => _ordersApi.GetOrders(A<SearchRequest>._)).Throws(new Exception("Test Error"));
+            await Assert.ThrowsAsync<ProjectXClientException>(() => _ordersFacade.GetOrders(accountId, startTime, endTime));
         }
 
         [Fact]
@@ -210,7 +207,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         }
 
         [Fact]
-        public async Task GetOpenOrders_ShouldReturnEmptyOrdersCollection_WhenRequestIsNotSuccessful()
+        public async Task GetOpenOrders_ShouldThrowProjectXClientException_WhenRequestIsNotSuccessful()
         {
             var accountId = 12345;
             var startTime = DateTime.UtcNow.AddDays(-1);
@@ -248,12 +245,10 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 }
             };
 
-            A.CallTo(() => _ordersApi.GetOpenOrders(accountId))
-                .Returns(new SearchResponse { Orders = providedOrders, Success = false });
-
             var ordersFacade = new OrdersFacade(_ordersApi);
-            var results = await _ordersFacade.GetOpenOrders(accountId);
-            results.Should().BeEmpty();
+
+            A.CallTo(() => _ordersApi.GetOpenOrders(accountId)).Throws(new Exception("Test Error"));
+            await Assert.ThrowsAsync<ProjectXClientException>(() => _ordersFacade.GetOpenOrders(accountId));
         }
 
         [Fact]

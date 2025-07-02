@@ -57,7 +57,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         }
 
         [Fact]
-        public async Task GetBars_ShouldReturnNoBars_WhenInvalidRequestIsMade()
+        public async Task GetBars_ShouldReturnThrowProjectXClientException_WhenInvalidRequestIsMade()
         {
             // Arrange
             var facade = new MarketDataFacade(_marketDataApi);
@@ -73,11 +73,8 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 Live = true
             };
 
-            A.CallTo(() => _marketDataApi.GetBars(A<BarsRequest>._))
-                .Returns(new CandleResponse { Bars = new List<Candle>(), Success = false });
-
-            var result = await facade.GetBars(request);
-            result.Count.Should().Be(0, "because the API returned no bars for the given request");
+            A.CallTo(() => _marketDataApi.GetBars(request)).Throws(new Exception("TestError"));
+            await Assert.ThrowsAsync<ProjectXClientException>(() => facade.GetBars(request));
         }
 
         [Fact]

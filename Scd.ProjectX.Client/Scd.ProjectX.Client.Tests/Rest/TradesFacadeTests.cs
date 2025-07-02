@@ -61,11 +61,8 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 EndTimestamp = DateTime.Now
             };
 
-            A.CallTo(() => _tradesApi.GetTrades(searchRequest))
-                .Returns(new SearchResponse { Success = false, ErrorMessage = "Failed to retrieve trades" });
-
-            var results = await _tradesFacade.GetTrades(searchRequest);
-            results.Should().BeEmpty();
+            A.CallTo(() => _tradesApi.GetTrades(searchRequest)).ThrowsAsync(new Exception("Test Error"));
+            await Assert.ThrowsAsync<ProjectXClientException>(() => _tradesFacade.GetTrades(searchRequest));
         }
 
         [Fact]

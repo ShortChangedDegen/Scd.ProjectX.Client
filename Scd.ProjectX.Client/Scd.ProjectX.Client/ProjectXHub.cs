@@ -15,7 +15,7 @@ namespace Scd.ProjectX.Client
     public class ProjectXHub : IDisposable, IProjectXHub
     {
         private bool _isDisposed;
-        private List<IDisposable> _subscriptions = new List<IDisposable>();
+        private List<IDisposable> _subscriptions = [];
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectXHub"/> class with the specified market and user hubs.

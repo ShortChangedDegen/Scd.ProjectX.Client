@@ -45,11 +45,11 @@ namespace Scd.ProjectX.Client.Rest
             Guard.NotNullOrEmpty(request.ContractId, nameof(request.ContractId));
 
             try
-            {
+            {                
                 var response = await _positionsApi.CloseContract(request);
                 if (!response.Success)
                 {                    
-                    throw new ProjectXClientException($"Failed to close contract: {response.ErrorMessage}", null, response.ErrorCode);
+                    throw new ProjectXClientException($"Failed to close contract: {response.ErrorMessage}", response.ErrorCode);
                 }
             }
             catch (Exception ex)
@@ -88,7 +88,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _positionsApi.PartiallyCloseContract(request);
                 if (!response.Success)
                 {
-                    throw new ProjectXClientException($"Failed to partially close contract: {response.ErrorMessage}", null, response.ErrorCode);
+                    throw new ProjectXClientException($"Failed to partially close contract: {response.ErrorMessage}", response.ErrorCode);
                 }
             }
             catch (Exception ex)
@@ -111,7 +111,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _positionsApi.SearchOpenPositions(accountId);
                 return response.Success
                     ? response.Positions ?? new List<Position>()
-                    : [];
+                    : throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}", response.ErrorCode);
             }
             catch (Exception ex)
             {

@@ -67,7 +67,7 @@ namespace Scd.ProjectX.Client.Rest
                 var response = await _marketDataApi.GetBars(request);
                 return response.Success 
                     ? response.Bars 
-                    : [];
+                    : throw new ProjectXClientException($"Error searching candle data: {response.ErrorMessage}", response.ErrorCode);
             }
             catch (Exception ex)
             {
@@ -99,13 +99,12 @@ namespace Scd.ProjectX.Client.Rest
         public async Task<List<Contract>> GetContracts(ContractSearchRequest request)
         {
             Guard.NotNull(request, nameof(request));
-
             try
             {
                 var response = await _marketDataApi.GetContracts(request);
                 return response.Success
                     ? response.Contracts
-                    : [];
+                    : throw new ProjectXClientException($"Error searching contracts: {response.ErrorMessage}", response.ErrorCode);
             }
             catch (Exception ex)
             {

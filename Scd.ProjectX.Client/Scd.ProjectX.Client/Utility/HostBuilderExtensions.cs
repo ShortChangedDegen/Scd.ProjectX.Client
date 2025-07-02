@@ -29,19 +29,16 @@ namespace Scd.ProjectX.Client.Utility
                 services.AddSingleton<IUserEventHub, UserEventHub>();
                 services.AddSingleton<IMarketEventHub, MarketEventHub>();
 
-                services.AddSingleton<JsonSerializerSettings>(sp =>
+                services.AddSingleton(sp =>
                 {
                     var settings = new JsonSerializerSettings
                     {
                         DefaultValueHandling = DefaultValueHandling.Ignore,
                         Error = (sender, args) =>
-                        {
-                            // Handle JSON deserialization errors
+                        {                            
                             var errorContext = args.ErrorContext;
                             if (errorContext != null)
-                            {
-                                // Log the error or handle it as needed
-                                Console.WriteLine($"JSON Deserialization Error: {errorContext.Error.Message}");
+                            {                                                             
                                 errorContext.Handled = true; // Mark the error as handled
                             }
                         }

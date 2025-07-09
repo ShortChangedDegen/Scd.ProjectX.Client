@@ -10,9 +10,7 @@ namespace Scd.ProjectX.Client.Utility
     /// This class handles authentication with the TopstepX API
     /// to retrieve an authentication token.
     /// </summary>
-    /// <param name="username">The API username.</param>
-    /// <param name="apiKey">The API SECRET key.</param>
-    /// <param name="apiEndpoint">The API Url.</param>"
+    /// <param name="options">ProjectX Client Settings</param>
     public class AuthTokenHandler(IOptions<ProjectXSettings> options) : IAuthTokenHandler
     {
         // Flag to indicate if the token should be refreshed

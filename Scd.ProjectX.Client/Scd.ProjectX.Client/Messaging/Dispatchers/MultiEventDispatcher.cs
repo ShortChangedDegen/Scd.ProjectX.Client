@@ -42,11 +42,19 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
             {
                 Guard.NotNull(@event, nameof(@event));
                 base.events.Add(@event);
+
                 foreach (var observer in observers)
                 {
-                    observer.OnNext(@event);
+                    try
+                    {
+                        observer.OnNext(@event);
+                    }
+                    catch (Exception ex)
+                    {
+                        observer?.OnError(ex);
+                    }
                 }
-            }
+            }            
         }
     }
 }

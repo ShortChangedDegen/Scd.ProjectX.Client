@@ -1,4 +1,5 @@
-﻿using Scd.ProjectX.Client.Models.Orders;
+﻿using Polly;
+using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
@@ -11,14 +12,17 @@ namespace Scd.ProjectX.Client.Rest
     public class OrdersFacade : IOrdersFacade
     {
         private readonly IOrdersApi _ordersApi;
+        private readonly ResiliencePipeline _pipeline;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="OrdersFacade"/> class.
         /// </summary>
         /// <param name="ordersApi">An <see cref="IOrdersApi"/> implementation.</param>
-        public OrdersFacade(IOrdersApi ordersApi)
+        public OrdersFacade(IOrdersApi ordersApi, ResiliencePipeline pipeline)
         {
             _ordersApi = Guard.NotNull(ordersApi, nameof(ordersApi));
+            _pipeline = Guard.NotNull(pipeline, nameof(pipeline));
+
         }
 
         /// <summary>
@@ -41,7 +45,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">A search request.</param>
         /// <returns>A collection of orders.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task<List<Order>> GetOrders(SearchRequest request)
         {
             Guard.NotNull(request, nameof(request));
@@ -53,7 +57,10 @@ namespace Scd.ProjectX.Client.Rest
 
             try
             {
-                var response = await _ordersApi.GetOrders(request);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _ordersApi.GetOrders(request)
+                );
+                                
                 return response.Success
                     ? response.Orders ?? []
                     : throw new ProjectXClientException($"Error getting orders: {response.ErrorMessage}", response.ErrorCode);
@@ -69,12 +76,15 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The account ID.</param>
         /// <returns>A collection of orders.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task<List<Order>> GetOpenOrders(int accountId)
         {
             try
             {
-                var response = await _ordersApi.GetOpenOrders(accountId);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _ordersApi.GetOpenOrders(accountId)
+                );
+                
                 return response.Success
                     ? response.Orders ?? []
                     : throw new ProjectXClientException($"Error getting open orders: {response.ErrorMessage}", response.ErrorCode);
@@ -90,7 +100,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The new order ID.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task CreateOrder(CreateOrderRequest request)
         {
             Guard.NotNull(request, nameof(request));
@@ -100,7 +110,10 @@ namespace Scd.ProjectX.Client.Rest
 
             try
             {
-                var response = await _ordersApi.CreateOrder(request);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _ordersApi.CreateOrder(request)
+                );
+                                
                 if (!response.Success)
                 {
                     throw new ProjectXClientException($"Failed to create order: {response.ErrorMessage}", response.ErrorCode);
@@ -129,7 +142,7 @@ namespace Scd.ProjectX.Client.Rest
         /// Cancels an order by its ID for the specified account.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task CancelOrder(CancelOrderRequest request)
         {
             Guard.NotNull(request, nameof(request));
@@ -138,7 +151,10 @@ namespace Scd.ProjectX.Client.Rest
 
             try
             {
-                var response = await _ordersApi.CancelOrder(request);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _ordersApi.CancelOrder(request)
+                );
+                                
                 if (!response.Success)
                 {
                     throw new ProjectXClientException($"Failed to cancel order: {response.ErrorMessage}", response.ErrorCode);
@@ -166,7 +182,7 @@ namespace Scd.ProjectX.Client.Rest
         /// Updates an existing order based on the provided request.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task UpdateOrder(ModifyRequest request)
         {
             Guard.NotNull(request, nameof(request));
@@ -175,7 +191,10 @@ namespace Scd.ProjectX.Client.Rest
 
             try
             {
-                var response = await _ordersApi.UpdateOrder(request);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _ordersApi.UpdateOrder(request)
+                );
+                                
                 if (!response.Success)
                 {
                     throw new ProjectXClientException($"Failed to update order: {response.ErrorMessage}", response.ErrorCode);                  

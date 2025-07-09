@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using Scd.ProjectX.Client.Models;
 using Scd.ProjectX.Client.Utility;
-using System.Security.Cryptography;
 
 namespace Scd.ProjectX.Client.Messaging.Dispatchers
 {
@@ -84,9 +83,16 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
             if (!observers.Contains(observer))
             {
                 observers.Add(observer);
-                foreach (var @event in events)
+                try
                 {
-                    observer.OnNext(@event);
+                    foreach (var @event in events)
+                    {
+                        observer.OnNext(@event);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    observer?.OnError(ex);
                 }
             }
             return new Unsubscriber<TEvent>(observers, observer);
@@ -130,6 +136,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
                 if (disposing)
                 {
                     events.Clear();
+                    observers.ForEach(o => o.OnCompleted());
                     observers.Clear();
                 }
                 // This is shared. Just set locaL reference to null.

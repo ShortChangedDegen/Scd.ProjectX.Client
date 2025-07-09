@@ -1,16 +1,17 @@
 ﻿using Microsoft.Extensions.Options;
+using Polly;
+using Polly.Registry;
 using Refit;
 using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
-using System.Text.Json;
 
 namespace Scd.ProjectX.Client
 {
     /// <summary>
     /// This service locator or factory will be removed when DI is implemented.
     /// </summary>
-    public class ProjectXApi(IOptions<ProjectXSettings> options, IAuthTokenHandler authTokenHandler) : IProjectXApi
+    public class ProjectXApi(IOptions<ProjectXSettings> options, IAuthTokenHandler authTokenHandler, ResiliencePipelineProvider<string> pipelineProvider) : IProjectXApi
     {
         private IAccountFacade? _accountFacade;
         private IMarketDataFacade? _marketDataFacade;
@@ -19,36 +20,37 @@ namespace Scd.ProjectX.Client
         private ITradesFacade? _tradesFacade;
 
         private readonly IAuthTokenHandler _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));
+        private readonly ResiliencePipeline _pipeline = pipelineProvider.GetPipeline(HostBuilderExtensions.ResiliencePipelineName);
 
         /// <summary>
         /// Gets the account management API for accessing account-related operations.
         /// </summary>
         public virtual IAccountFacade Accounts =>
-            _accountFacade ??= new AccountFacade(CreateService<IAccountApi>());
+            _accountFacade ??= new AccountFacade(CreateService<IAccountApi>(), _pipeline);
 
         /// <summary>
         /// Gets the market data API for accessing market data operations.
         /// </summary>
         public virtual IMarketDataFacade MarketData =>
-            _marketDataFacade ??= new MarketDataFacade(CreateService<IMarketDataApi>());
+            _marketDataFacade ??= new MarketDataFacade(CreateService<IMarketDataApi>(), _pipeline);
 
         /// <summary>
         /// Gets the orders API for accessing order-related operations.
         /// </summary>
         public virtual IOrdersFacade Orders =>
-            _ordersFacade ??= new OrdersFacade(CreateService<IOrdersApi>());
+            _ordersFacade ??= new OrdersFacade(CreateService<IOrdersApi>(), _pipeline);
 
         /// <summary>
         /// Gets the positions API for accessing position-related operations.
         /// </summary>
         public virtual IPositionsFacade Positions =>
-            _positionsFacade ??= new PositionsFacade(CreateService<IPositionsApi>());
+            _positionsFacade ??= new PositionsFacade(CreateService<IPositionsApi>(), _pipeline);
 
         /// <summary>
         /// Gets the trades API for accessing trade-related operations.
         /// </summary>
         public virtual ITradesFacade Trades =>
-            _tradesFacade ??= new TradesFacade(CreateService<ITradesApi>());
+            _tradesFacade ??= new TradesFacade(CreateService<ITradesApi>(), _pipeline);
 
         /// <summary>
         /// Authenticates with the API and cache the token.

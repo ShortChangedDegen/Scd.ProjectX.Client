@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using Polly;
 using Scd.ProjectX.Client.Models;
 using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest;
@@ -12,24 +13,25 @@ namespace Scd.ProjectX.Client.Tests.Rest
     {
         private IOrdersApi _ordersApi;
         private OrdersFacade _ordersFacade;
+        private ResiliencePipeline _pipeline = ResiliencePipeline.Empty;
 
         public OrdersFacadeTests()
         {
             _ordersApi = A.Fake<IOrdersApi>();
-            _ordersFacade = new OrdersFacade(_ordersApi);
+            _ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
         }
 
         [Fact]
         public void OrdersFacade_ShouldThrowArgumentNullException_WhenOrdersApiIsNull()
         {
-            var thrownException = Assert.Throws<ArgumentNullException>(() => new OrdersFacade(null));
+            var thrownException = Assert.Throws<ArgumentNullException>(() => new OrdersFacade(null, _pipeline));
             thrownException.Message.Should().Contain("ordersApi");
         }
 
         [Fact]
         public async Task GetOrders_ShouldThrowArgumentNullException_WhenProvidedRequestIsNull()
         {
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ArgumentNullException>(() => _ordersFacade.GetOrders(null));
             actualException.Message.Should().Contain("request");
         }
@@ -41,7 +43,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             var startTime = DateTime.UtcNow.AddDays(-1);
             var endTime = DateTime.UtcNow.AddDays(-2);
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ArgumentException>(() => _ordersFacade.GetOrders(accountId, startTime, endTime));
             actualException.Message.Should().Contain("EndTimestamp");
         }
@@ -156,7 +158,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _ordersApi.GetOpenOrders(accountId))
                 .Throws(new Exception("TestException"));
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
 
             var actualException = await Assert.ThrowsAsync<ProjectXClientException>(() => _ordersFacade.GetOpenOrders(accountId));
             actualException.Message.Should().Contain("open orders");
@@ -245,7 +247,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 }
             };
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
 
             A.CallTo(() => _ordersApi.GetOpenOrders(accountId)).Throws(new Exception("Test Error"));
             await Assert.ThrowsAsync<ProjectXClientException>(() => _ordersFacade.GetOpenOrders(accountId));
@@ -256,7 +258,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         {
             CreateOrderRequest providedRequest = null;
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ArgumentNullException>(() =>
             _ordersFacade.CreateOrder(providedRequest));
             actualException.Message.Should().Contain("request");
@@ -276,7 +278,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 StopPrice = 99.00m
             };
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ArgumentException>(() =>
             ordersFacade.CreateOrder(providedRequest));
             actualException.Message.Should().Contain("Size");
@@ -296,7 +298,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 StopPrice = 99.00m
             };
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ArgumentException>(() =>
             _ordersFacade.CreateOrder(providedRequest));
             actualException.Message.Should().Contain("ContractId");
@@ -316,7 +318,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 StopPrice = 99.00m
             };
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ArgumentException>(() =>
             _ordersFacade.CreateOrder(providedRequest));
             actualException.Message.Should().Contain("Type");
@@ -339,7 +341,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _ordersApi.CreateOrder(A<CreateOrderRequest>._))
                 .Throws(new Exception("TestException"));
 
-            var ordersFacade = new OrdersFacade(_ordersApi);
+            var ordersFacade = new OrdersFacade(_ordersApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ProjectXClientException>(
                 () => _ordersFacade.CreateOrder(providedRequest));
             actualException.Message.Should().Contain("Error creating orders");

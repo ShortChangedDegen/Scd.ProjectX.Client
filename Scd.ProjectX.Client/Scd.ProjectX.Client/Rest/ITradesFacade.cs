@@ -14,7 +14,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="startTime">The earliest timestamp.</param>
         /// <param name="endTime">The latest timestamp.</param>
         /// <returns>The matching trades.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Trade>> GetTrades(int accountId, DateTime startTime, DateTime? endTime = null);
 
         /// <summary>
@@ -22,7 +22,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="searchRequest">The request.</param>
         /// <returns>A list of matching trades.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Trade>> GetTrades(SearchRequest searchRequest);
     }
 }

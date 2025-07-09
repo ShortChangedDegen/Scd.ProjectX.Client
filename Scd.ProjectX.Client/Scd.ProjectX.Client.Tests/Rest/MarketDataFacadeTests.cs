@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using Polly;
 using Scd.ProjectX.Client.Models.MarketData;
 using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest;
@@ -11,6 +12,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
     public class MarketDataFacadeTests
     {
         private IMarketDataApi _marketDataApi;
+        private ResiliencePipeline _pipeline = ResiliencePipeline.Empty;
 
         public MarketDataFacadeTests()
         {
@@ -21,14 +23,14 @@ namespace Scd.ProjectX.Client.Tests.Rest
         public void MarketDataFacade_ShouldThrowArgumentNullException_WhenMarketDataApiIsNull()
         {
             IMarketDataApi? nullMarketDataApi = null;
-            Assert.Throws<ArgumentNullException>(() => new MarketDataFacade(nullMarketDataApi!));
+            Assert.Throws<ArgumentNullException>(() => new MarketDataFacade(nullMarketDataApi!, _pipeline));
         }
 
         [Fact]
         public async Task GetBars_ShouldReturnBars_WhenValidRequestIsMade()
         {
             // Arrange
-            var facade = new MarketDataFacade(_marketDataApi);
+            var facade = new MarketDataFacade(_marketDataApi, _pipeline);
             var request = new BarsRequest
             {
                 ContractId = "test-contract",
@@ -60,7 +62,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         public async Task GetBars_ShouldReturnThrowProjectXClientException_WhenInvalidRequestIsMade()
         {
             // Arrange
-            var facade = new MarketDataFacade(_marketDataApi);
+            var facade = new MarketDataFacade(_marketDataApi, _pipeline);
             var request = new BarsRequest
             {
                 ContractId = "test-contract",
@@ -83,7 +85,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             var expectedMessage = "Error getting candle data";
 
             // Arrange
-            var facade = new MarketDataFacade(_marketDataApi);
+            var facade = new MarketDataFacade(_marketDataApi, _pipeline);
             var request = new BarsRequest
             {
                 ContractId = "test-contract",
@@ -115,14 +117,14 @@ namespace Scd.ProjectX.Client.Tests.Rest
         [Fact]
         public async Task GetBars_ShouldThrowArgumentNullException_WhenContractIdIsNull()
         {
-            var facade = new MarketDataFacade(_marketDataApi);
+            var facade = new MarketDataFacade(_marketDataApi, _pipeline);
             await Assert.ThrowsAsync<ArgumentNullException>(async () => await facade.GetBars(null!, DateTime.MinValue, DateTime.MaxValue));
         }
 
         [Fact]
         public async Task GetBars_ShouldThrowArgumentException_WhenStartDateIsLaterThanEndDate()
         {
-            var facade = new MarketDataFacade(_marketDataApi);
+            var facade = new MarketDataFacade(_marketDataApi, _pipeline);
             await Assert.ThrowsAsync<ArgumentException>(async () => await facade.GetBars("A contract"!, DateTime.MaxValue, DateTime.MinValue));
         }
 
@@ -141,7 +143,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
                 Success = true
             };
 
-            var facade = new MarketDataFacade(_marketDataApi);
+            var facade = new MarketDataFacade(_marketDataApi, _pipeline);
             A.CallTo(() => _marketDataApi.GetContracts(A<ContractSearchRequest>._))
                 .Returns(Task.FromResult(contractSearchResponse));
 
@@ -153,7 +155,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         [Fact]
         public async Task GetContracts_ShouldThrowProjectXClientException_WhenApiErrorOccurs()
         {
-            var facade = new MarketDataFacade(_marketDataApi);
+            var facade = new MarketDataFacade(_marketDataApi, _pipeline);
             A.CallTo(() => _marketDataApi.GetContracts(A<ContractSearchRequest>._))
                 .Throws(new Exception("API error"));
 

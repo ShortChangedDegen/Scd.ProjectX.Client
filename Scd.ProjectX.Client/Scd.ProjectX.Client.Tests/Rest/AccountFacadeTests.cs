@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using Polly;
 using Scd.ProjectX.Client.Models.Account;
 using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Rest.Apis;
@@ -10,30 +11,32 @@ namespace Scd.ProjectX.Client.Tests.Rest
     public class AccountFacadeTests
     {
         private IAccountApi _accountApi;
+        private ResiliencePipeline _pipeline;
 
         public AccountFacadeTests()
         {
             _accountApi = A.Fake<IAccountApi>();
+            _pipeline = ResiliencePipeline.Empty;
         }
 
         [Fact]
         public void AccountFacade_ShouldThrowArgumentNullException_WhenAccountApiIsNull()
         {
-            var thrownException = Assert.Throws<ArgumentNullException>(() => new AccountFacade(null));
+            var thrownException = Assert.Throws<ArgumentNullException>(() => new AccountFacade(null, _pipeline));
             thrownException.Message.Should().Contain("accountApi");
         }
 
         [Fact]
         public void GetUserAccount_ShouldThrowArgumentNullException_WhenProvidedRequestIsNull()
         {
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
             var actualException = Assert.ThrowsAsync<ArgumentNullException>(() => accountFacade.GetUserAccount(null));
         }
 
         [Fact]
         public void GetUserAccount_ShouldThrowProjectXException_WhenAnErrorOccursCallingSearchAccounts()
         {
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
             A.CallTo(() => _accountApi.SearchAccounts(A<AccountSearchRequest>._)).Throws(new Exception("Test Error"));
 
             var actualException = Assert.ThrowsAsync<ProjectXClientException>(async () => await accountFacade.GetUserAccount(true));
@@ -42,7 +45,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         [Fact]
         public void GetUserAccount_ShouldCallAccountApi_WhenProvidedValidRequest()
         {
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
             var response = accountFacade.GetUserAccount(true);
 
             A.CallTo(() => _accountApi.SearchAccounts(A<AccountSearchRequest>._)).MustHaveHappened();
@@ -51,7 +54,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         [Fact]
         public async Task Authenticate_ShouldThrowArgumentNullException_WhenRequestOrItsUsernameOrApiKeyIsNull()
         {
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
             var actualException = await Assert.ThrowsAsync<ArgumentNullException>(() => accountFacade.Authenticate(null, "apiKey"));
             actualException.Message.Should().Contain("username");
             actualException = await Assert.ThrowsAsync<ArgumentNullException>(() => accountFacade.Authenticate("username", null));
@@ -63,7 +66,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
         {
             A.CallTo(() => _accountApi.Authenticate(A<AuthenticationRequest>._))
                 .Throws(new Exception("Test Error"));
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
 
             var exception = Assert.ThrowsAsync<ProjectXClientException>(() => accountFacade.Authenticate(new AuthenticationRequest { ApiKey = "test", UserName = "test" }));
             exception.Result.Message.Should().Contain("Error authenticating user");
@@ -76,7 +79,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _accountApi.Authenticate(A<AuthenticationRequest>._))
                 .Returns(new AuthenticationResponse { Success = true, Token = expectedToken });
 
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
 
             var response = await accountFacade.Authenticate(
                 new AuthenticationRequest
@@ -95,7 +98,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _accountApi.Authenticate(A<AuthenticationRequest>._))
                 .Returns(new AuthenticationResponse { Success = false, Token = "NotAnEmptyToken" });
 
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
 
             var response = await accountFacade.Authenticate(new AuthenticationRequest { UserName = "username", ApiKey = "password" });
 
@@ -109,7 +112,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _accountApi.RefreshToken())
                 .Returns(new RefreshTokenResponse { Success = true, NewToken = expectedToken });
 
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
 
             var response = await accountFacade.RefreshToken();
 
@@ -123,7 +126,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _accountApi.RefreshToken())
                 .Returns(new RefreshTokenResponse { Success = false, NewToken = "NotAnEmptyValue" });
 
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
 
             var response = await accountFacade.RefreshToken();
 
@@ -137,7 +140,7 @@ namespace Scd.ProjectX.Client.Tests.Rest
             A.CallTo(() => _accountApi.RefreshToken())
                 .Throws(new Exception(expectedMessage));
 
-            var accountFacade = new AccountFacade(_accountApi);
+            var accountFacade = new AccountFacade(_accountApi, _pipeline);
 
             var actualException = await Assert.ThrowsAsync<ProjectXClientException>(async () => await accountFacade.RefreshToken());
 

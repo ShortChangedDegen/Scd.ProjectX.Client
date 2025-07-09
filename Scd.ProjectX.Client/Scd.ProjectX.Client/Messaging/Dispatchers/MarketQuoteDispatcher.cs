@@ -29,7 +29,14 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
             events.Add(@event);
             foreach (var observer in observers)
             {
-                observer.OnNext(@event);
+                try
+                {
+                    observer.OnNext(@event);
+                }
+                catch (Exception ex) 
+                { 
+                    observer.OnError(ex);
+                }
             }
         }
     }

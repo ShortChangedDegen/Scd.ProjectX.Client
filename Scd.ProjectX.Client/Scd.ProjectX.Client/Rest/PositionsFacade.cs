@@ -1,4 +1,5 @@
-﻿using Scd.ProjectX.Client.Models.Positions;
+﻿using Polly;
+using Scd.ProjectX.Client.Models.Positions;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
@@ -11,14 +12,16 @@ namespace Scd.ProjectX.Client.Rest
     public class PositionsFacade : IPositionsFacade
     {
         private readonly IPositionsApi _positionsApi;
+        private readonly ResiliencePipeline _pipeline;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PositionsFacade"/> class.
         /// </summary>
         /// <param name="positionApi">An implementation of <see cref="IPositionsApi"/>.</param>
-        public PositionsFacade(IPositionsApi positionApi)
+        public PositionsFacade(IPositionsApi positionApi, ResiliencePipeline pipeline)
         {
             _positionsApi = Guard.NotNull(positionApi, nameof(positionApi));
+            _pipeline = Guard.NotNull(pipeline, nameof(pipeline));
         }
 
         /// <summary>
@@ -37,7 +40,7 @@ namespace Scd.ProjectX.Client.Rest
         /// Closes a contract for a specific account using the provided request object.
         /// </summary>
         /// <param name="request">The request object</param>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task CloseContract(CloseRequest request)
         {
             Guard.NotNull(request, nameof(request));
@@ -45,8 +48,11 @@ namespace Scd.ProjectX.Client.Rest
             Guard.NotNullOrEmpty(request.ContractId, nameof(request.ContractId));
 
             try
-            {                
-                var response = await _positionsApi.CloseContract(request);
+            {
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _positionsApi.CloseContract(request)
+                );
+
                 if (!response.Success)
                 {                    
                     throw new ProjectXClientException($"Failed to close contract: {response.ErrorMessage}", response.ErrorCode);
@@ -85,7 +91,10 @@ namespace Scd.ProjectX.Client.Rest
 
             try
             {
-                var response = await _positionsApi.PartiallyCloseContract(request);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _positionsApi.PartiallyCloseContract(request)
+                );
+
                 if (!response.Success)
                 {
                     throw new ProjectXClientException($"Failed to partially close contract: {response.ErrorMessage}", response.ErrorCode);
@@ -102,13 +111,16 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="accountId">The account ID.</param>
         /// <returns>The open positions for the specifiec account.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task<List<Position>> SearchOpenPositions(int accountId)
         {
             Guard.NotDefault(accountId, nameof(accountId));
             try
             {
-                var response = await _positionsApi.SearchOpenPositions(accountId);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _positionsApi.SearchOpenPositions(accountId)
+                );
+
                 return response.Success
                     ? response.Positions ?? new List<Position>()
                     : throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}", response.ErrorCode);

@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using Polly;
 using Scd.ProjectX.Client.Models.Trades;
 using Scd.ProjectX.Client.Rest;
 using Scd.ProjectX.Client.Rest.Apis;
@@ -11,11 +12,12 @@ namespace Scd.ProjectX.Client.Tests.Rest
     {
         private ITradesApi _tradesApi;
         private ITradesFacade _tradesFacade;
+        private ResiliencePipeline _pipeline = ResiliencePipeline.Empty;
 
         public TradesFacadeTests()
         {
             _tradesApi = A.Fake<ITradesApi>();
-            _tradesFacade = new TradesFacade(_tradesApi);
+            _tradesFacade = new TradesFacade(_tradesApi, _pipeline);
         }
 
         [Fact]

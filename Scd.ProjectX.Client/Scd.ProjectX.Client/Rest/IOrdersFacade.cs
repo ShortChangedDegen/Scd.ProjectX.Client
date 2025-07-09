@@ -11,7 +11,7 @@ namespace Scd.ProjectX.Client.Rest
         /// Cancels an order by its ID for the specified account.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task CancelOrder(CancelOrderRequest request);
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The request.</param>
         /// <returns>The new order ID.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task CreateOrder(CreateOrderRequest request);
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The account ID.</param>
         /// <returns>A collection of orders.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Order>> GetOpenOrders(int accountId);
 
         /// <summary>
@@ -51,7 +51,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">A search request.</param>
         /// <returns>A collection of orders.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Order>> GetOrders(SearchRequest request);
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Scd.ProjectX.Client.Rest
         /// Updates an existing order based on the provided request.
         /// </summary>
         /// <param name="request">The request.</param>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task UpdateOrder(ModifyRequest request);
     }
 }

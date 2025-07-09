@@ -33,7 +33,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The request object.</param>
         /// <returns>The matching contracts.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Contract>> GetContracts(ContractSearchRequest request);
 
         /// <summary>

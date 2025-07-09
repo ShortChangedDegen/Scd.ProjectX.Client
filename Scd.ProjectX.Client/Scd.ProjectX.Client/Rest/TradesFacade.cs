@@ -1,4 +1,5 @@
-﻿using Scd.ProjectX.Client.Models.Trades;
+﻿using Polly;
+using Scd.ProjectX.Client.Models.Trades;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
 
@@ -11,14 +12,16 @@ namespace Scd.ProjectX.Client.Rest
     public class TradesFacade : ITradesFacade
     {
         private readonly ITradesApi _tradesApi;
+        private readonly ResiliencePipeline _pipeline;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TradesFacade"/> class.
         /// </summary>
         /// <param name="tradesApi">An <see cref="ITradesApi"/> implementation.</param>
-        public TradesFacade(ITradesApi tradesApi)
+        public TradesFacade(ITradesApi tradesApi, ResiliencePipeline pipeline)
         {
             _tradesApi = Guard.NotNull(tradesApi, nameof(tradesApi));
+            _pipeline = Guard.NotNull(pipeline, nameof(pipeline));
         }
 
         /// <summary>
@@ -28,7 +31,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="startTime">The earliest timestamp.</param>
         /// <param name="endTime">The latest timestamp.</param>
         /// <returns>The matching trades.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task<List<Trade>> GetTrades(int accountId, DateTime startTime, DateTime? endTime = null) =>
             await GetTrades(new SearchRequest
             {
@@ -42,7 +45,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="searchRequest">The request.</param>
         /// <returns>A list of matching trades.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task<List<Trade>> GetTrades(SearchRequest searchRequest)
         {
             Guard.NotNull(searchRequest, nameof(searchRequest));
@@ -51,7 +54,9 @@ namespace Scd.ProjectX.Client.Rest
 
             try
             {
-                var response = await _tradesApi.GetTrades(searchRequest);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _tradesApi.GetTrades(searchRequest)
+                );
                 return response.Success 
                     ? response.Trades ?? []
                     : throw new ProjectXClientException($"Error searching trades: {response.ErrorMessage}", response.ErrorCode);

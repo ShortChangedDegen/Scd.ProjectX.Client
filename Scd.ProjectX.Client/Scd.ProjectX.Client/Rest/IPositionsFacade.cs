@@ -11,7 +11,7 @@ namespace Scd.ProjectX.Client.Rest
         /// Closes a contract for a specific account using the provided request object.
         /// </summary>
         /// <param name="request">The request object</param>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task CloseContract(CloseRequest request);
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="accountId">The account ID.</param>
         /// <returns>The open positions for the specifiec account.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Position>> SearchOpenPositions(int accountId);
     }
 }

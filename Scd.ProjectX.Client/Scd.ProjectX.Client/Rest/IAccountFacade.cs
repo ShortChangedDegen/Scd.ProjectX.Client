@@ -1,4 +1,5 @@
 ﻿using Scd.ProjectX.Client.Models.Account;
+using Scd.ProjectX.Client.Utility;
 
 namespace Scd.ProjectX.Client.Rest
 {
@@ -13,7 +14,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The authentication request.</param>
         /// <returns>A JWT token.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<string> Authenticate(AuthenticationRequest request);
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace Scd.ProjectX.Client.Rest
         /// <param name="username">The username for the API authentication.</param>
         /// <param name="apiKey">The API key for the API authentication.</param>
         /// <returns>A JWT token.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<string> Authenticate(string username, string apiKey);
 
         /// <summary>
@@ -30,7 +31,7 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The request object.</param>
         /// <returns>A <see cref="List{Account}"/>.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Account>> GetUserAccount(AccountSearchRequest request);
 
         /// <summary>
@@ -38,14 +39,14 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="onlyActive">Indicates whether to include only active accounts.</param>
         /// <returns>A <see cref="List{Account}"/>.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         Task<List<Account>> GetUserAccount(bool onlyActive = true);
 
         /// <summary>
         /// Refreshes the authentication token for the user account.
         /// </summary>
         /// <returns>The new JWT token.</returns>
-        /// <exception cref="InvalidOperationException">Failed to refresh token.</exception>
+        /// <exception cref="ProjectXClientException">Failed to refresh token.</exception>
         Task<string?> RefreshToken();
     }
 }

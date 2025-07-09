@@ -1,5 +1,6 @@
 ﻿using FakeItEasy;
 using FluentAssertions;
+using Polly;
 using Scd.ProjectX.Client.Models;
 using Scd.ProjectX.Client.Models.Positions;
 using Scd.ProjectX.Client.Rest;
@@ -12,18 +13,19 @@ namespace Scd.ProjectX.Client.Tests.Rest
     {
         private readonly IPositionsApi _positionsApi;
         private readonly IPositionsFacade _positionsFacade;
+        private readonly ResiliencePipeline _pipeline = ResiliencePipeline.Empty;
 
         public PositionsFacadeTests()
         {
             _positionsApi = A.Fake<IPositionsApi>();
-            _positionsFacade = new PositionsFacade(_positionsApi);
+            _positionsFacade = new PositionsFacade(_positionsApi, _pipeline);
         }
 
         [Fact]
         public void PositionsFacade_ShouldThrowArgumentNullException_WhenPositionsApiIsNull()
         {
             IPositionsApi? nullPositionsApi = null;
-            Assert.Throws<ArgumentNullException>(() => new PositionsFacade(nullPositionsApi));
+            Assert.Throws<ArgumentNullException>(() => new PositionsFacade(nullPositionsApi, _pipeline));
         }
 
         [Fact]

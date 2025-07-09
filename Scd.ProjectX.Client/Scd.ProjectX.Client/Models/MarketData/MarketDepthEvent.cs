@@ -24,7 +24,7 @@
         /// <summary>
         /// Gets or sets the type of the market depth event.
         /// </summary>
-        public int Type { get; set; } // What is this?
+        public int Type { get; set; } // Why is this magical number called Type?
 
         /// <summary>
         /// Gets or sets the timestamp for the market depth event.

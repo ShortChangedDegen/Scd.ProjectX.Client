@@ -1,4 +1,5 @@
-﻿using Scd.ProjectX.Client.Models.MarketData;
+﻿using Polly;
+using Scd.ProjectX.Client.Models.MarketData;
 using Scd.ProjectX.Client.Models.Orders;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
@@ -12,14 +13,16 @@ namespace Scd.ProjectX.Client.Rest
     public class MarketDataFacade : IMarketDataFacade
     {
         private readonly IMarketDataApi _marketDataApi;
+        private readonly ResiliencePipeline _pipeline;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MarketDataFacade"/> class.
         /// </summary>
         /// <param name="marketDataApi">An implementation of <see cref="IMarketDataApi"/></param>
-        public MarketDataFacade(IMarketDataApi marketDataApi)
+        public MarketDataFacade(IMarketDataApi marketDataApi, ResiliencePipeline pipeline)
         {
             _marketDataApi = Guard.NotNull(marketDataApi, nameof(marketDataApi));
+            _pipeline = Guard.NotNull(pipeline, nameof(pipeline));
         }
 
         /// <summary>
@@ -64,7 +67,10 @@ namespace Scd.ProjectX.Client.Rest
             Guard.NotNull(request, nameof(request));
             try
             {
-                var response = await _marketDataApi.GetBars(request);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _marketDataApi.GetBars(request)
+                );
+
                 return response.Success 
                     ? response.Bars 
                     : throw new ProjectXClientException($"Error searching candle data: {response.ErrorMessage}", response.ErrorCode);
@@ -95,13 +101,16 @@ namespace Scd.ProjectX.Client.Rest
         /// </summary>
         /// <param name="request">The request object.</param>
         /// <returns>The matching contracts.</returns>
-        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="ProjectXClientException"></exception>
         public async Task<List<Contract>> GetContracts(ContractSearchRequest request)
         {
             Guard.NotNull(request, nameof(request));
             try
             {
-                var response = await _marketDataApi.GetContracts(request);
+                var response = await _pipeline.ExecuteAsync(async context =>
+                    await _marketDataApi.GetContracts(request)
+                );
+
                 return response.Success
                     ? response.Contracts
                     : throw new ProjectXClientException($"Error searching contracts: {response.ErrorMessage}", response.ErrorCode);

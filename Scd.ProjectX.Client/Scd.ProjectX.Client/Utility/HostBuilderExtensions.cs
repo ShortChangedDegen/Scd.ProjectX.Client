@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
+using Polly;
+using Polly.Retry;
 using Scd.ProjectX.Client.Messaging;
 using Scd.ProjectX.Client.Rest;
 
@@ -29,22 +30,22 @@ namespace Scd.ProjectX.Client.Utility
                 services.AddSingleton<IUserEventHub, UserEventHub>();
                 services.AddSingleton<IMarketEventHub, MarketEventHub>();
 
-                services.AddSingleton(sp =>
-                {
-                    var settings = new JsonSerializerSettings
+                services.AddResiliencePipeline(ResiliencePipelineName, builder =>
                     {
-                        DefaultValueHandling = DefaultValueHandling.Ignore,
-                        Error = (sender, args) =>
-                        {                            
-                            var errorContext = args.ErrorContext;
-                            if (errorContext != null)
-                            {                                                             
-                                errorContext.Handled = true; // Mark the error as handled
-                            }
-                        }
-                    };
-                    return settings;
-                });
+                        builder
+                        .AddRetry(new RetryStrategyOptions
+                        {
+                            BackoffType = DelayBackoffType.Exponential,
+                            MaxRetryAttempts = 5,
+                            Delay = TimeSpan.FromSeconds(2),
+                            // Prevent repetitive race conditions by adding random jitter to the delay
+                            UseJitter = true
+                        })
+                        .AddTimeout(TimeSpan.FromSeconds(5))
+                        .Build();
+                    });
             });
+            
+        public static string ResiliencePipelineName { get; } = "scd-projectx-client";
     }
 }

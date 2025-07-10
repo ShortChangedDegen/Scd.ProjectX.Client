@@ -7,6 +7,11 @@
     public class MarketQuoteEvent : IEvent
     {
         /// <summary>
+        /// Gets or sets the full symbol identifier for the instrument associated with the trade.
+        /// </summary>
+        public string? SymbolId { get; set; }
+
+        /// <summary>
         /// Gets or sets the instrument identifier for the quote.
         /// </summary>
         public string? Symbol { get; set; }

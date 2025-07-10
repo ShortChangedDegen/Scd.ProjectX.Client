@@ -36,6 +36,15 @@ namespace Scd.ProjectX.Client.Messaging
         {
             settings = Guard.NotNull(projectXSettings?.Value, nameof(projectXSettings));
             _authTokenHandler = Guard.NotNull(handler, nameof(handler));
+            
+        }
+
+        /// <summary>
+        /// Starts the <see cref="MarketEventHub"/>.
+        /// </summary>
+        /// <returns>A task.</returns>
+        public async Task StartAsync()
+        {
             var getTokenTask = _authTokenHandler.GetToken();
             try
             {
@@ -46,24 +55,15 @@ namespace Scd.ProjectX.Client.Messaging
                     getTokenTask.RunSynchronously();
                 }
             }
-            catch (InvalidOperationException oEx)
+            catch (InvalidOperationException)
             {
-                // Log and ignore RunSynchronously already.
             }
 
-            // Ensure the token is retrieved before building the connection
             hubConnection = new HubConnectionBuilder()
                 .WithAutomaticReconnect()
                 .WithUrl($"{settings.MarketHubUrl}?access_token={getTokenTask.Result}")
                 .Build();
-        }
 
-        /// <summary>
-        /// Starts the <see cref="MarketEventHub"/>.
-        /// </summary>
-        /// <returns>A task.</returns>
-        public async Task StartAsync()
-        {
             while (hubConnection!.State == HubConnectionState.Disconnected)
             {
                 await hubConnection.StartAsync();

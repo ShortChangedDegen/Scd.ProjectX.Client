@@ -7,6 +7,11 @@
     public record MarketDepthEvent : IEvent
     {
         /// <summary>
+        /// Gets or sets the symbol for which the market depth event is relevant.
+        /// </summary>
+        public string? SymbolId { get; set; }
+
+        /// <summary>
         /// Gets or sets the price level.
         /// </summary>
         public decimal Price { get; set; }
@@ -29,6 +34,6 @@
         /// <summary>
         /// Gets or sets the timestamp for the market depth event.
         /// </summary>
-        public DateTime Timestamp { get; set; } = default;
+        public DateTime Timestamp { get; set; } = default;        
     }
 }

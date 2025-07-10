@@ -7,9 +7,14 @@
     public record MarketTradeEvent : IEvent
     {
         /// <summary>
+        /// Gets or sets the full symbol identifier for the instrument associated with the trade.
+        /// </summary>
+        public string? SymbolId { get; set; }
+
+        /// <summary>
         /// Gets or sets the identifier for the instrument associated with the trade.
         /// </summary>
-        public required string SymbolId { get; set; }
+        public required string Symbol { get; set; }
 
         /// <summary>
         /// Gets or sets the price at which the trade was executed.

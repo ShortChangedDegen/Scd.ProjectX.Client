@@ -38,7 +38,15 @@ namespace Scd.ProjectX.Client.Messaging
         public UserEventHub(IAuthTokenHandler authTokenHandler, IOptions<ProjectXSettings> projectXSettings)
         {
             settings = Guard.NotNull(projectXSettings?.Value, nameof(projectXSettings));
-            _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));
+            _authTokenHandler = Guard.NotNull(authTokenHandler, nameof(authTokenHandler));            
+        }
+
+        /// <summary>
+        /// Starts the <see cref="UserEventHub"/>.
+        /// </summary>
+        /// <returns>A task.</returns>
+        public async Task StartAsync()
+        {
             var getTokenTask = _authTokenHandler.GetToken();
             try
             {
@@ -49,22 +57,15 @@ namespace Scd.ProjectX.Client.Messaging
                     getTokenTask.RunSynchronously();
                 }
             }
-            catch (InvalidOperationException oEx)
+            catch (InvalidOperationException)
             {
-                // Log and ignore RunSynchronously already.
             }
+
             hubConnection = new HubConnectionBuilder()
                 .WithAutomaticReconnect()
                 .WithUrl($"{settings.UserHubUrl}?access_token={getTokenTask.Result}")
                 .Build();
-        }
 
-        /// <summary>
-        /// Starts the <see cref="UserEventHub"/>.
-        /// </summary>
-        /// <returns>A task.</returns>
-        public async Task StartAsync()
-        {
             while (hubConnection?.State == HubConnectionState.Disconnected)
             {
                 await hubConnection.StartAsync();

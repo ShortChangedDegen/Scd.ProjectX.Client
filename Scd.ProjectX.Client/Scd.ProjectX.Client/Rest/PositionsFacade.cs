@@ -134,7 +134,7 @@ namespace Scd.ProjectX.Client.Rest
             }
 
             return response.Success
-                    ? response.Positions ?? new List<Position>()
+                    ? response.Positions ?? []
                     : throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}", response.ErrorCode);
         }
     }

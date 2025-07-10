@@ -4,7 +4,7 @@ Provides common boilerplate functionality for communicating with the [ProjectX R
 
 ---
 
-###### Version v0.2.2.0 is possibly unstable due to throwing exceptions when the request returns an unsuccessful result. I will fix that breaking change.
+###### Version v0.2.2.0 is possibly unstable due to throwing exceptions when the request returns an unsuccessful result. I will fix that breaking change so it can be migrated.
 
 ### Overview
 

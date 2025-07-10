@@ -4,8 +4,6 @@ Provides common boilerplate functionality for communicating with the [ProjectX R
 
 ---
 
-###### Version v0.2.2.0 is possibly unstable due to throwing exceptions when the request returns an unsuccessful result. I will fix that breaking change so it can be migrated.
-
 ### Overview
 
 This library provides a simple way to access the ProjectX REST API and real-time event hubs. It is intended to be used as a starting point for building applications that interact with the ProjectX platform.

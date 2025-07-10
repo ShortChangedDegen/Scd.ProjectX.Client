@@ -65,20 +65,22 @@ namespace Scd.ProjectX.Client.Rest
         public async Task<List<Candle>> GetBars(BarsRequest request)
         {
             Guard.NotNull(request, nameof(request));
+
+            CandleResponse response;
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _marketDataApi.GetBars(request)
-                );
-
-                return response.Success 
-                    ? response.Bars 
-                    : throw new ProjectXClientException($"Error searching candle data: {response.ErrorMessage}", response.ErrorCode);
+                );                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException("Error getting candle data", ex);
             }
+
+            return response.Success
+                    ? response.Bars
+                    : throw new ProjectXClientException($"Error searching candle data: {response.ErrorMessage}", response.ErrorCode);
         }
 
         /// <summary>
@@ -105,20 +107,22 @@ namespace Scd.ProjectX.Client.Rest
         public async Task<List<Contract>> GetContracts(ContractSearchRequest request)
         {
             Guard.NotNull(request, nameof(request));
+            ContractSearchResponse response;
+
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _marketDataApi.GetContracts(request)
-                );
-
-                return response.Success
-                    ? response.Contracts
-                    : throw new ProjectXClientException($"Error searching contracts: {response.ErrorMessage}", response.ErrorCode);
+                );                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException("Error getting contracts", ex);
             }
+
+            return response.Success
+                    ? response.Contracts
+                    : throw new ProjectXClientException($"Error searching contracts: {response.ErrorMessage}", response.ErrorCode);
         }
     }
 }

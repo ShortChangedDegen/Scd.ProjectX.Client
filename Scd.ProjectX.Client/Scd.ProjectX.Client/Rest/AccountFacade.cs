@@ -45,20 +45,22 @@ namespace Scd.ProjectX.Client.Rest
         /// <returns>A <see cref="List{Account}"/>.</returns>
         /// <exception cref="ProjectXClientException"></exception>
         public async Task<List<Account>> GetUserAccount(AccountSearchRequest request)
-        {            
+        {
+            AccountSearchResponse response;
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _accountApi.SearchAccounts(Guard.NotNull(request, nameof(request)))
-                );
-                return response.Success ? 
-                    response.Accounts ?? []
-                    : throw new ProjectXClientException($"Error getting user accounts: {response.ErrorMessage}", response.ErrorCode);
+                );                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException("Error getting user accounts", ex);
             }
+
+            return response.Success ?
+                    response.Accounts ?? []
+                    : throw new ProjectXClientException($"Error getting user accounts: {response.ErrorMessage}", response.ErrorCode);
         }
 
         /// <summary>
@@ -88,19 +90,23 @@ namespace Scd.ProjectX.Client.Rest
             Guard.NotNull(request.UserName, nameof(request.UserName));
             Guard.NotNullOrEmpty(request.ApiKey, nameof(request.ApiKey));
 
+            AuthenticationResponse response;
+
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _accountApi.Authenticate(request)
                 );
-                return response.Success 
-                    ? response?.Token 
-                    : string.Empty;
+                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException($"Error authenticating user", ex);
             }
+
+            return response.Success
+                    ? response?.Token
+                    : string.Empty;
         }
 
         /// <summary>
@@ -110,19 +116,22 @@ namespace Scd.ProjectX.Client.Rest
         /// <exception cref="ProjectXClientException">Failed to refresh token.</exception>
         public async Task<string?> RefreshToken()
         {
+            RefreshTokenResponse response;
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _accountApi.RefreshToken()
                 );
-                return response.Success 
-                    ? response?.NewToken 
-                    : string.Empty;
+                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException("Error refreshing token", ex);
             }
+
+            return response.Success
+                    ? response?.NewToken
+                    : string.Empty;
         }
     }
 }

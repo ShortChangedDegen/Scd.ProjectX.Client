@@ -1,7 +1,9 @@
 ﻿using Polly;
+using Scd.ProjectX.Client.Models;
 using Scd.ProjectX.Client.Models.Positions;
 using Scd.ProjectX.Client.Rest.Apis;
 using Scd.ProjectX.Client.Utility;
+using System.Collections.Generic;
 
 namespace Scd.ProjectX.Client.Rest
 {
@@ -47,20 +49,22 @@ namespace Scd.ProjectX.Client.Rest
             Guard.NotDefault(request.AccountId, nameof(request.AccountId));
             Guard.NotNullOrEmpty(request.ContractId, nameof(request.ContractId));
 
+            DefaultResponse response;
+
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _positionsApi.CloseContract(request)
-                );
-
-                if (!response.Success)
-                {                    
-                    throw new ProjectXClientException($"Failed to close contract: {response.ErrorMessage}", response.ErrorCode);
-                }
+                );                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException($"Error closing contract: {ex.Message}", ex);
+            }
+
+            if (!response.Success)
+            {
+                throw new ProjectXClientException($"Failed to close contract: {response.ErrorMessage}", response.ErrorCode);
             }
         }
 
@@ -89,20 +93,22 @@ namespace Scd.ProjectX.Client.Rest
             Guard.NotNullOrEmpty(request.ContractId, nameof(request.ContractId));
             Guard.IsGreaterThan(0, request.Size, nameof(request.Size));
 
+            DefaultResponse response;
+
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _positionsApi.PartiallyCloseContract(request)
                 );
-
-                if (!response.Success)
-                {
-                    throw new ProjectXClientException($"Failed to partially close contract: {response.ErrorMessage}", response.ErrorCode);
-                }
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException($"Error partially closing contract: {ex.Message}", ex);
+            }
+
+            if (!response.Success)
+            {
+                throw new ProjectXClientException($"Failed to partially close contract: {response.ErrorMessage}", response.ErrorCode);
             }
         }
 
@@ -115,20 +121,21 @@ namespace Scd.ProjectX.Client.Rest
         public async Task<List<Position>> SearchOpenPositions(int accountId)
         {
             Guard.NotDefault(accountId, nameof(accountId));
+            SearchResponse response;
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _positionsApi.SearchOpenPositions(accountId)
-                );
-
-                return response.Success
-                    ? response.Positions ?? new List<Position>()
-                    : throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}", response.ErrorCode);
+                );                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException($"Error searching open positions: {ex.Message}", ex);
             }
+
+            return response.Success
+                    ? response.Positions ?? new List<Position>()
+                    : throw new ProjectXClientException($"Error searching open positions: {response.ErrorMessage}", response.ErrorCode);
         }
     }
 }

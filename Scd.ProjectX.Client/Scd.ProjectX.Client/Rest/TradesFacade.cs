@@ -52,19 +52,22 @@ namespace Scd.ProjectX.Client.Rest
             Guard.NotDefault(searchRequest.AccountId, nameof(searchRequest.AccountId));
             Guard.IsEarlierDate(searchRequest.StartTimestamp, searchRequest.EndTimestamp, nameof(searchRequest.EndTimestamp));
 
+            SearchResponse response;
+
             try
             {
-                var response = await _pipeline.ExecuteAsync(async context =>
+                response = await _pipeline.ExecuteAsync(async context =>
                     await _tradesApi.GetTrades(searchRequest)
-                );
-                return response.Success 
-                    ? response.Trades ?? []
-                    : throw new ProjectXClientException($"Error searching trades: {response.ErrorMessage}", response.ErrorCode);
+                );                
             }
             catch (Exception ex)
             {
                 throw new ProjectXClientException("Error retrieving trades", ex);
             }
+
+            return response.Success
+                    ? response.Trades ?? []
+                    : throw new ProjectXClientException($"Error searching trades: {response.ErrorMessage}", response.ErrorCode);
         }
     }
 }

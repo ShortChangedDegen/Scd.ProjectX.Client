@@ -28,7 +28,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
             {
                 try
                 {
-                    @event.AddRange(@event);
+                    @event.ForEach(e => observer.OnNext(e));
                 }
                 catch (Exception ex)
                 {

@@ -135,7 +135,9 @@ ProjectX API in Python.
 
 *Python developers should probably check out the [ProjectX Gateway API SDK for Python (Unofficial)](https://github.com/ChristianJStarr/projectx-sdk-python) repo.*
 
-- Is ShortChangedDegen a degenerate gambler or something who always loses money?
+- Is ShortChangedDegen a degenerate gambler or someone who always loses money on 'get rich quick' scams?
 
 ¯\_(ツ)_/¯ It was the first thing I could think of when joining a discord for the first time. 
-It was mostly tongue and cheek self-deprecation. We've all been there. Well, I have.
+It was mostly tongue in cheek self-deprecation. We've all been there... or that's what I felt like when 
+I decided to take the time to learn more about the financial markets, trading and how I can apply my existing skill 
+set to that domain.

@@ -125,9 +125,9 @@ See `Scd.ProjectX.Client.Example` for a running console app.
 I decided to share some common functionality that needs to be implemented by everyone. Hopefully, it makes it
 easier to get started developing with the ProjectX API and doing the interesting things you want to do.
 
-I do not have any professional relationship with ProjectX. 
+### This is an unofficial, independent client.
 
-[You can buy me a coffee if you're feeling generous and want to](https://buymeacoffee.com/shortchangeddegen)
+There is a package available on nuget if you want a quick start: [Scd.ProjectX.Client](https://www.nuget.org/packages/Scd.ProjectX.Client/)
 
 I haven't looked into using [Python.NET](https://pythonnet.github.io/). Obviously this isn't the answer 
 for everything (or everyone(anyone?)) but if its a good fit, it could be a way to get started with the 

@@ -22,7 +22,7 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
         public void Publish(string id, List<MarketDepthEvent> @event)
         {
             Guard.NotNull(@event, nameof(@event));
-            @event.ForEach(e => e.SymbolId = Guard.NotNullOrEmpty(id, nameof(id)));
+            @event.ForEach(e => e.SymbolId = id);
             events.AddRange(@event);
             foreach (var observer in observers)
             {

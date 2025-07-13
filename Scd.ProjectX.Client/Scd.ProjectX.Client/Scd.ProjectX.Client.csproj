@@ -15,7 +15,7 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/ShortChangedDegen/Scd.ProjectX.Client</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageTags>ProjectX Trading Futures Topstep </PackageTags>
+    <PackageTags>ProjectX Trading Futures</PackageTags>
     <PackageReleaseNotes>Inintial Release</PackageReleaseNotes>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <IncludeSymbols>True</IncludeSymbols>

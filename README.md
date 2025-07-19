@@ -1,4 +1,4 @@
-# ShortChangedDegen's ProjectX API Client
+# ShortChangedDegen's (Unofficial) ProjectX API Client
 
 Provides common boilerplate functionality for communicating with the [ProjectX REST API and event hubs.](https://gateway.docs.projectx.com/docs/intro)
 

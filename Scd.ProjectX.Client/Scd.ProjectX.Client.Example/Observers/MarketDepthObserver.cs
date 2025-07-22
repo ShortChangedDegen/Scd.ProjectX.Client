@@ -13,6 +13,7 @@ namespace Scd.ProjectX.Client.Example.Observers
 
         public void OnNext(MarketDepthEvent value)
         {
+            // Hint: Dont's block if you want to keep up.
             var @event = JsonSerializer.Serialize(value);
             Console.WriteLine($"MarketDepthEvent ({++_throughputCounter}):\n {@event}");
         }

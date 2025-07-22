@@ -34,6 +34,6 @@
         /// <summary>
         /// Gets or sets the timestamp for the market depth event.
         /// </summary>
-        public DateTime Timestamp { get; set; } = default;        
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;        
     }
 }

@@ -72,7 +72,6 @@ namespace Scd.ProjectX.Client.Example
                 Console.WriteLine($"Error: {ex}");
             }
 
-            Console.WriteLine("Press and key to exit");
             Console.ReadKey();
         }
     }

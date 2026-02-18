@@ -22,8 +22,25 @@ namespace Scd.ProjectX.Client.Messaging.Dispatchers
         public void Publish(string id, List<MarketDepthEvent> @event)
         {
             Guard.NotNull(@event, nameof(@event));
-            @event.ForEach(e => e.SymbolId = id);
-            events.AddRange(@event);
+
+            try
+            {
+                if (@event == null
+                    || @event.Count <= 0
+                    || @event.Any(e => e == null))
+                {
+                    return;
+                }
+                @event.ForEach(e => e.SymbolId = id);
+                events.AddRange(@event);
+            } 
+            catch (NullReferenceException nrefex)
+            {
+                Console.WriteLine(nrefex);
+                return;
+            }
+
+
             foreach (var observer in observers)
             {
                 try

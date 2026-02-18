@@ -29,7 +29,7 @@ namespace Scd.ProjectX.Client.Example
 
                 Console.WriteLine("Accounts:");
                 var accounts = await _projectXApi.Accounts.GetUserAccount(true);
-                accounts = accounts.Where(x => x.Name.StartsWith("PRACTICE", StringComparison.InvariantCultureIgnoreCase)).ToList();
+                accounts = accounts.Where(x => x.Name.StartsWith("PRAC", StringComparison.InvariantCultureIgnoreCase)).ToList();
                 accounts.ForEach(x => Console.WriteLine($"{x.Id} - {x.Name}"));
                 if (!accounts?.Any() ?? false)
                 {

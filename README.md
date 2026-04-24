@@ -1,5 +1,7 @@
 # ShortChangedDegen's (Unofficial) ProjectX API Client
 
+Go check out https://github.com/adammarquette/MarqSpec.Client.ProjectX . It's the beefed up version that used agentic AI to develop and cover more use cases. This was the POC, and then AI was used to polish it.
+
 Provides common boilerplate functionality for communicating with the [ProjectX REST API and event hubs.](https://gateway.docs.projectx.com/docs/intro)
 
 ---
